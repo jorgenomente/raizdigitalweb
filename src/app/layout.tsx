@@ -12,19 +12,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
-  title: 'Raíz Digital — Base Template',
-  description: 'Plantilla Next.js + Tailwind + shadcn/ui + Framer para landings rápidas.',
-  metadataBase: new URL('https://example.com'), // luego lo cambias por proyecto
+export const metadata: Metadata = {
+  title: "Raíz Digital — Base Template",
+  description:
+    "Plantilla Next.js + Tailwind + shadcn/ui + Framer para landings rápidas.",
+  metadataBase: new URL("https://example.com"), // luego lo cambias por proyecto
   openGraph: {
-    title: 'Raíz Digital — Base Template',
-    description: 'Plantilla para proyectos web claros y minimalistas.',
-    images: [{ url: '/og-cover.png', width: 1200, height: 630 }],
-    type: 'website',
+    title: "Raíz Digital — Base Template",
+    description: "Plantilla para proyectos web claros y minimalistas.",
+    images: [{ url: "/og-cover.png", width: 1200, height: 630 }],
+    type: "website",
   },
-  icons: { icon: '/favicon.ico' },
-}
-
+  icons: { icon: "/favicon.ico" },
+};
 
 export default function RootLayout({
   children,

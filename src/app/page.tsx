@@ -1,3 +1,5 @@
+'use client';
+
 // Raíz Digital — Landing minimal clara/tecnológica (low‑cost)
 // ❖ Stack: Next.js 15 (App Router) + Tailwind + Framer Motion + Formspree
 // ❖ Uso: este archivo exporta un componente React que podrás portar a /app/page.tsx
@@ -231,17 +233,22 @@ function ContactForm() {
 
     // Reemplaza "YOUR_FORMSPREE_ID" por tu ID (p. ej. xwkgjybz)
     const endpoint = "https://formspree.io/f/YOUR_FORMSPREE_ID";
-    const data = Object.fromEntries(new FormData(form) as any);
+    const formData = new FormData(form);
+    const payload = {
+      name: String(formData.get("name") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      message: String(formData.get("message") ?? ""),
+    };
 
     try {
       const res = await fetch(endpoint, {
         method: "POST",
-        headers: { "Accept": "application/json" },
-        body: JSON.stringify(data),
+        headers: { Accept: "application/json" },
+        body: JSON.stringify(payload),
       });
       if (res.ok) setStatus("sent");
       else setStatus("error");
-    } catch (err) {
+    } catch {
       setStatus("error");
     }
   }

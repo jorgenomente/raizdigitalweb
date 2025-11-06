@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,18 +12,24 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "Raíz Digital — Base Template",
   description:
-    "Plantilla Next.js + Tailwind + shadcn/ui + Framer para landings rápidas.",
+    "Diseñamos sitios web, identidades y sistemas digitales que integran estrategia, diseño y tecnología para lograr resultados reales.",
   metadataBase: new URL("https://example.com"), // luego lo cambias por proyecto
   openGraph: {
     title: "Raíz Digital — Base Template",
-    description: "Plantilla para proyectos web claros y minimalistas.",
+    description:
+      "Diseñamos sitios web, identidades y sistemas digitales que integran estrategia, diseño y tecnología para lograr resultados reales.",
     images: [{ url: "/og-cover.png", width: 1200, height: 630 }],
     type: "website",
   },
-  icons: { icon: "/favicon.ico" },
+  icons: { icon: "/favicon2.png" },
 };
 
 export default function RootLayout({
@@ -34,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} bg-[#0E1C26] text-white antialiased`}
       >
         {children}
       </body>

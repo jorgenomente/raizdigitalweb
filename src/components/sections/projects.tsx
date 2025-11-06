@@ -18,49 +18,14 @@ const projects = [
     href: "https://gestock-multitenant.vercel.app/demo",
   },
   {
-    title: "NexaFlow",
-    subtitle: "Plataforma de gestión digital",
+    title: "Pew",
+    subtitle:
+      "Asistente financiero personal que traduce tus metas en planes accionables con seguimiento inteligente y cercano.",
     image:
-      "https://images.unsplash.com/photo-1669062897193-f8a4215c2033?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB3ZWJzaXRlJTIwZGVzaWdufGVufDF8fHx8MTc2MTQ3NzE5OHww&ixlib=rb-4.1.0&q=80&w=1080",
-    tags: ["UX/UI", "Desarrollo Web", "Estrategia"],
-    color: "#4FD4E4",
-    href: "#",
-  },
-  {
-    title: "Clarity App",
-    subtitle: "Sistema de productividad móvil",
-    image:
-      "https://images.unsplash.com/photo-1658953229625-aad99d7603b4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2JpbGUlMjBhcHAlMjBpbnRlcmZhY2V8ZW58MXx8fHwxNzYxNTU0NzI3fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    tags: ["UX/UI", "Branding"],
+      "https://images.unsplash.com/photo-1556740749-887f6717d7e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2Mjk3Mjl8MHwxfHNlYXJjaHw5fHxmaW5hbmNlJTIwaW5zcGlyYXRpb258ZW58MXx8fHwxNzYxNTYxMTA4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+    tags: ["Product Strategy", "Finanzas", "UX/UI"],
     color: "#D55FA3",
-    href: "#",
-  },
-  {
-    title: "Elevate Studio",
-    subtitle: "Identidad visual y branding",
-    image:
-      "https://images.unsplash.com/photo-1636247498840-693054bb4bcc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxicmFuZGluZyUyMGRlc2lnbiUyMG1vY2t1cHxlbnwxfHx8fDE3NjE0NjIyNjF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    tags: ["Branding", "Estrategia"],
-    color: "#4FD4E4",
-    href: "#",
-  },
-  {
-    title: "DataPulse",
-    subtitle: "Dashboard analítico empresarial",
-    image:
-      "https://images.unsplash.com/photo-1759661966728-4a02e3c6ed91?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaWdpdGFsJTIwZGFzaGJvYXJkJTIwYW5hbHl0aWNzfGVufDF8fHx8MTc2MTUyMDAzMHww&ixlib=rb-4.1.0&q=80&w=1080",
-    tags: ["UX/UI", "Desarrollo Web"],
-    color: "#D55FA3",
-    href: "#",
-  },
-  {
-    title: "Commerce One",
-    subtitle: "E-commerce de nueva generación",
-    image:
-      "https://images.unsplash.com/photo-1658297063569-162817482fb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlY29tbWVyY2UlMjB3ZWJzaXRlfGVufDF8fHx8MTc2MTUwMzAzNHww&ixlib=rb-4.1.0&q=80&w=1080",
-    tags: ["Desarrollo Web", "UX/UI", "Estrategia"],
-    color: "#4FD4E4",
-    href: "#",
+    href: "https://pew-beta.vercel.app/demo",
   },
 ] as const;
 

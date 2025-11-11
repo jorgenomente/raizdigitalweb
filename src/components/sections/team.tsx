@@ -1,35 +1,44 @@
 'use client';
 
 import { motion } from "framer-motion";
+import { useDictionary } from "@/components/providers/translation-provider";
 import { ImageWithFallback } from "@/components/ui/image-with-fallback";
+import type { Dictionary, TeamMemberId } from "@/lib/i18n/dictionaries";
 import { useMotionPreferences } from "@/lib/motion-preferences";
 
-const teamMembers = [
+type TeamMemberConfig = {
+  id: TeamMemberId;
+  name: string;
+  image: string;
+  hoverImage?: string;
+  color: string;
+};
+
+type TeamMemberCopy = Dictionary["team"]["members"][TeamMemberId];
+
+const teamMembers: TeamMemberConfig[] = [
   {
+    id: "jorge",
     name: "Jorge",
-    role: "Estrategia y Desarrollo",
-    description: "Integra lógica, estructura y visión digital.",
     image: "/avatars/Jorge1.png",
     hoverImage: "/avatars/Jorge2.png",
     color: "#4FD4E4",
   },
   {
+    id: "paola",
     name: "Paola",
-    role: "Diseño UX/UI y Branding",
-    description: "Crea experiencias visuales que conectan con propósito.",
     image: "/avatars/Paola1.png",
     hoverImage: "/avatars/paola2.PNG",
     color: "#D55FA3",
   },
   {
+    id: "samira",
     name: "Samira",
-    role: "Chief Happiness Officer 🐾",
-    description: "Guarda la energía del equipo y da alegría al sistema.",
     image: "/avatars/Samira1.png",
     hoverImage: "/avatars/Samira2.jpg",
     color: "#4FD4E4",
   },
-] as const;
+];
 
 function Particle({
   delay,
@@ -90,11 +99,13 @@ function Particle({
 
 function TeamMemberCard({
   member,
+  memberCopy,
   index,
   allowMotion,
   shouldReduceMotion,
 }: {
-  member: (typeof teamMembers)[number];
+  member: TeamMemberConfig;
+  memberCopy: TeamMemberCopy;
   index: number;
   allowMotion: boolean;
   shouldReduceMotion: boolean;
@@ -291,7 +302,7 @@ function TeamMemberCard({
             color: member.color,
           }}
         >
-          {member.role}
+          {memberCopy.role}
         </p>
       </motion.div>
 
@@ -303,17 +314,21 @@ function TeamMemberCard({
         viewport={{ once: true }}
         transition={{ delay: 0.5 + index * 0.2 }}
       >
-        {member.description}
+        {memberCopy.description}
       </motion.p>
     </motion.div>
   );
 }
 
 export function Team() {
+  const { team: teamCopy } = useDictionary();
   const { allowMotion, shouldReduceMotion } = useMotionPreferences();
 
   return (
-    <section className="relative overflow-hidden px-6 py-32">
+    <section
+      id="team"
+      className="relative overflow-hidden px-6 py-32 scroll-mt-28"
+    >
       <div className="absolute inset-0 bg-gradient-to-b from-[#111418] via-[#0E1C26] to-[#111418]" />
 
       {!shouldReduceMotion && (
@@ -371,10 +386,10 @@ export function Team() {
             className="mb-6 text-5xl text-white tracking-tight md:text-6xl"
             style={{ fontFamily: "Space Grotesk, sans-serif" }}
           >
-            Equipo Raíz Digital
+            {teamCopy.heading}
           </h2>
           <p className="mx-auto max-w-3xl text-xl leading-relaxed text-[#AAB7C4]">
-            Personas reales, mentes creativas y energía viva detrás del sistema.
+            {teamCopy.description}
           </p>
         </motion.div>
 
@@ -537,8 +552,9 @@ export function Team() {
           <div className="relative z-10 grid items-start justify-items-center gap-16 md:grid-cols-3">
             {teamMembers.map((member, index) => (
               <TeamMemberCard
-                key={member.name}
+                key={member.id}
                 member={member}
+                memberCopy={teamCopy.members[member.id]}
                 index={index}
                 allowMotion={allowMotion}
                 shouldReduceMotion={shouldReduceMotion}

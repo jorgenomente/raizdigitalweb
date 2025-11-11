@@ -3,8 +3,10 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useMotionPreferences } from "@/lib/motion-preferences";
+import { useDictionary } from "@/components/providers/translation-provider";
 
 export function Hero() {
+  const { hero } = useDictionary();
   const { allowMotion, shouldReduceMotion } = useMotionPreferences();
   const glowBlur = shouldReduceMotion
     ? "blur(24px)"
@@ -12,7 +14,10 @@ export function Hero() {
   const showDecorations = !shouldReduceMotion;
 
   return (
-    <section className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden">
+    <section
+      id="hero"
+      className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden scroll-mt-28"
+    >
       <div className="absolute inset-0 bg-gradient-to-br from-[#0E1C26] via-[#111418] to-[#0E1C26]" />
 
       <div
@@ -153,9 +158,9 @@ export function Hero() {
             className="mb-8 text-5xl text-white md:text-7xl"
             style={{ fontFamily: "Space Grotesk, sans-serif" }}
           >
-            Sistemas digitales que conectan{" "}
+            {hero.title}{" "}
             <span className="bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3] bg-clip-text text-transparent">
-              estrategia, diseño y tecnología.
+              {hero.highlight}
             </span>
           </h1>
         </motion.div>
@@ -166,8 +171,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Diseñamos sitios web, identidades y sistemas funcionales para generar experiencias y resultados reales. 
-
+          {hero.description}
         </motion.p>
 
         <motion.div
@@ -180,7 +184,7 @@ export function Hero() {
               className="relative z-10 flex items-center gap-2"
               style={{ fontFamily: "Space Grotesk, sans-serif" }}
             >
-              Explorar servicios
+              {hero.cta}
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </span>
           </button>

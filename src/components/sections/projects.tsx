@@ -3,40 +3,47 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { useDictionary } from "@/components/providers/translation-provider";
 import { ImageWithFallback } from "@/components/ui/image-with-fallback";
+import type { Dictionary, ProjectId } from "@/lib/i18n/dictionaries";
 import { useMotionPreferences } from "@/lib/motion-preferences";
 
-const projects = [
+type ProjectCardConfig = {
+  id: ProjectId;
+  image: string;
+  color: string;
+  href: string;
+};
+
+type ProjectCopy = Dictionary["projects"]["items"][ProjectId];
+
+const projectCards: ProjectCardConfig[] = [
   {
-    title: "Gestock",
-    subtitle:
-      "Suite multitienda que orquesta inventarios, ventas y compras para tiendas físicas con datos en tiempo real.",
-    image:
-      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2Mjk3Mjl8MHwxfHNlYXJjaHwyMXx8cmV0YWlsJTIwc3RvcmV8ZW58MXx8fHwxNzYxNTYwODIxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-    tags: ["Product Design", "Desarrollo Web", "Automatización"],
+    id: "gestock",
+    image: "/gestock.png",
     color: "#4FD4E4",
     href: "https://gestock-multitenant.vercel.app/demo",
   },
   {
-    title: "Pew",
-    subtitle:
-      "Asistente financiero personal que traduce tus metas en planes accionables con seguimiento inteligente y cercano.",
-    image:
-      "https://images.unsplash.com/photo-1556740749-887f6717d7e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2Mjk3Mjl8MHwxfHNlYXJjaHw5fHxmaW5hbmNlJTIwaW5zcGlyYXRpb258ZW58MXx8fHwxNzYxNTYxMTA4fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    tags: ["Product Strategy", "Finanzas", "UX/UI"],
+    id: "pew",
+    image: "/pew.png",
     color: "#D55FA3",
     href: "https://pew-beta.vercel.app/demo",
   },
-] as const;
+];
 
 function ProjectCard({
   project,
+  copy,
+  viewCaseLabel,
   index,
   isScrolling,
   allowMotion,
   shouldReduceMotion,
 }: {
-  project: (typeof projects)[number];
+  project: ProjectCardConfig;
+  copy: ProjectCopy;
+  viewCaseLabel: string;
   index: number;
   isScrolling: boolean;
   allowMotion: boolean;
@@ -52,6 +59,8 @@ function ProjectCard({
   const enableInteractiveHover = allowMotion && !shouldReduceMotion;
   const linkHref = project.href ?? "#";
   const isExternalLink = linkHref.startsWith("http");
+  const linkTarget = isExternalLink ? "_blank" : undefined;
+  const linkRel = isExternalLink ? "noopener noreferrer" : undefined;
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     if (isScrolling || !enableInteractiveHover) return;
@@ -131,46 +140,57 @@ function ProjectCard({
           />
         )}
 
-        <div className="relative h-56 overflow-hidden md:h-64">
-          <ImageWithFallback
-            src={project.image}
-            alt={project.title}
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0E1C26]/90" />
-          <div
-            className="absolute left-0 right-0 top-0 h-[2px] transition-opacity"
-            style={{
-              background: `linear-gradient(to right, ${project.color}, transparent)`,
-              boxShadow: `0 0 15px ${project.color}80`,
-              opacity: isHovered ? 1 : 0.6,
-              transitionDuration: "0.4s",
-              transitionTimingFunction: "cubic-bezier(0.25, 0.1, 0.25, 1)",
-            }}
-          />
-        </div>
+        <a
+          href={linkHref}
+          target={linkTarget}
+          rel={linkRel}
+          className="group/image block focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E1C26] focus-visible:ring-white/50"
+        >
+          <div className="relative h-56 overflow-hidden md:h-64">
+            <ImageWithFallback
+              src={project.image}
+              alt={copy.title}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover/image:scale-[1.03]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0E1C26]/90" />
+            <div
+              className="absolute left-0 right-0 top-0 h-[2px] transition-opacity"
+              style={{
+                background: `linear-gradient(to right, ${project.color}, transparent)`,
+                boxShadow: `0 0 15px ${project.color}80`,
+                opacity: isHovered ? 1 : 0.6,
+                transitionDuration: "0.4s",
+                transitionTimingFunction: "cubic-bezier(0.25, 0.1, 0.25, 1)",
+              }}
+            />
+          </div>
+        </a>
 
         <div className="relative px-6 pb-6 pt-6 md:px-8 md:pb-8">
-          <h3
-            className="mb-2 text-xl text-white transition-all md:text-2xl"
-            style={{
-              fontFamily: "Space Grotesk, sans-serif",
-              letterSpacing: isHovered ? "0.02em" : "normal",
-              transitionDuration: "0.4s",
-              transitionTimingFunction: "cubic-bezier(0.25, 0.1, 0.25, 1)",
-            }}
-          >
-            {project.title}
+          <h3 className="mb-2 text-xl md:text-2xl" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+            <a
+              href={linkHref}
+              target={linkTarget}
+              rel={linkRel}
+              className="inline-flex items-center text-white transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E1C26] focus-visible:ring-white/50"
+              style={{
+                letterSpacing: isHovered ? "0.02em" : "normal",
+                transitionDuration: "0.4s",
+                transitionTimingFunction: "cubic-bezier(0.25, 0.1, 0.25, 1)",
+              }}
+            >
+              {copy.title}
+            </a>
           </h3>
           <p
             className="mb-4 text-sm text-[#AAB7C4] md:mb-6 md:text-base"
             style={{ fontFamily: "Inter, sans-serif" }}
           >
-            {project.subtitle}
+            {copy.subtitle}
           </p>
 
           <div className="mb-4 flex flex-wrap gap-2 md:mb-6">
-            {project.tags.map((tag) => (
+            {copy.tags.map((tag) => (
               <span
                 key={tag}
                 className="rounded-full border px-2.5 py-1 text-xs transition-all md:px-3 md:py-1.5"
@@ -197,11 +217,11 @@ function ProjectCard({
               transitionDuration: "0.4s",
               transitionTimingFunction: "cubic-bezier(0.25, 0.1, 0.25, 1)",
             }}
-            target={isExternalLink ? "_blank" : undefined}
-            rel={isExternalLink ? "noopener noreferrer" : undefined}
+            target={linkTarget}
+            rel={linkRel}
           >
             <span className="relative">
-              Ver caso
+              {viewCaseLabel}
               <span
                 className="absolute bottom-0 left-0 h-[1px] w-0 transition-all group-hover/link:w-full"
                 style={{
@@ -239,6 +259,7 @@ function ProjectCard({
 }
 
 export function Projects() {
+  const { projects: projectsCopy } = useDictionary();
   const { allowMotion, shouldReduceMotion } = useMotionPreferences();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -293,7 +314,10 @@ export function Projects() {
   }, []);
 
   return (
-    <section className="relative py-24 md:py-32">
+    <section
+      id="projects"
+      className="relative py-24 scroll-mt-28 md:py-32"
+    >
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0E1C26] via-[#111418] to-[#0E1C26]" />
 
@@ -360,11 +384,10 @@ export function Projects() {
             className="mb-6 text-4xl text-white tracking-tight md:text-5xl lg:text-6xl"
             style={{ fontFamily: "Space Grotesk, sans-serif" }}
           >
-            Proyectos
+            {projectsCopy.heading}
           </h2>
           <p className="mx-auto max-w-3xl text-lg text-[#AAB7C4] leading-relaxed md:text-xl">
-            Exploramos el diseño, la estrategia y la tecnología a través de
-            proyectos que evolucionan.
+            {projectsCopy.description}
           </p>
         </motion.div>
 
@@ -400,11 +423,13 @@ export function Projects() {
                 display: none;
               }
             `}</style>
-            <div className="projects-track flex gap-6">
-              {projects.map((project, index) => (
+            <div className="projects-track flex gap-6 justify-center">
+              {projectCards.map((project, index) => (
                 <ProjectCard
-                  key={project.title}
+                  key={project.id}
                   project={project}
+                  copy={projectsCopy.items[project.id]}
+                  viewCaseLabel={projectsCopy.viewCase}
                   index={index}
                   isScrolling={isScrolling}
                   allowMotion={allowMotion}
@@ -415,7 +440,7 @@ export function Projects() {
           </div>
 
           <div className="mt-8 flex items-center justify-center gap-3 px-6 text-sm text-[#AAB7C4]/70">
-            <span>Scroll</span>
+            <span>{projectsCopy.progressLabel}</span>
             <div className="relative h-1 w-32 overflow-hidden rounded-full bg-[#1C2C35]">
               <motion.div
                 className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3]"

@@ -1,5 +1,6 @@
 'use client';
 import { motion } from "framer-motion";
+import { useDictionary } from "@/components/providers/translation-provider";
 import { useMotionPreferences } from "@/lib/motion-preferences";
 
 const gradientOrbs = [
@@ -48,10 +49,14 @@ const orbitalRings = [
 ] as const;
 
 export function Manifesto() {
+  const { manifesto } = useDictionary();
   const { allowMotion, shouldReduceMotion } = useMotionPreferences();
 
   return (
-    <section className="relative overflow-hidden px-6 py-32">
+    <section
+      id="manifesto"
+      className="relative overflow-hidden px-6 py-32 scroll-mt-28"
+    >
       <div className="absolute inset-0 bg-[#111418]" />
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
@@ -216,7 +221,7 @@ export function Manifesto() {
           className="inline-flex items-center justify-center rounded-full border border-white/10 px-5 py-2 text-sm uppercase tracking-[0.4em] text-[#AAB7C4]/80"
           style={{ fontFamily: "Geist Mono, monospace" }}
         >
-          Diseño que conecta + sistemas que ordenan
+          {manifesto.tagline}
         </span>
       </motion.div>
 
@@ -230,8 +235,28 @@ export function Manifesto() {
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Acompañamos a empresas en crecimiento que quieren modernizar su forma de operar.
+            {manifesto.headline}
           </motion.h2>
+
+          <motion.div
+            className="mt-8 w-full max-w-xl rounded-3xl border border-white/10 bg-white/5 p-8 text-left shadow-[0_25px_120px_rgba(7,12,18,0.65)]"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.35 }}
+          >
+            <p className="text-sm uppercase tracking-[0.3em] text-[#AAB7C4]/80">
+              {manifesto.idealForHeading}
+            </p>
+            <ul className="mt-5 space-y-4 text-lg text-white/90">
+              {manifesto.idealForList.map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <span className="mt-2 h-2 w-2 rounded-full bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3]" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
         </div>
 
       </div>

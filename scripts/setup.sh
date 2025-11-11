@@ -11,6 +11,6 @@ fi
 
 git init
 git add .
-git commit -m "chore: bootstrap from raiz-next-template"
+git commit -m "chore: bootstrap from the-cosmic-studio"
 
 echo "✓ Proyecto listo. Corre 'pnpm dev' (o 'npm run dev')."

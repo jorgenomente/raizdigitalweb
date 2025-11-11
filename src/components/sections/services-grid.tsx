@@ -2,38 +2,45 @@
 
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Palette, Workflow, Compass } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { ArrowRight, Palette, Workflow, Compass, Layers3 } from "lucide-react";
+import { useDictionary } from "@/components/providers/translation-provider";
+import type { ServiceId } from "@/lib/i18n/dictionaries";
 import { useMotionPreferences } from "@/lib/motion-preferences";
 
-const services = [
+type ServiceNode = {
+  id: ServiceId;
+  icon: LucideIcon;
+  color: string;
+  position: "top" | "bottom";
+};
+
+const serviceNodes: ServiceNode[] = [
   {
+    id: "strategy",
+    icon: Layers3,
+    color: "#7C8CFF",
+    position: "bottom",
+  },
+  {
+    id: "webDesign",
     icon: Palette,
-    title: "Diseño Web Atractivo",
-    description:
-      "Sitios que reflejan la esencia de tu marca con estética cuidada, estructura clara y buena experiencia en todos los dispositivos.",
-    benefit: "Conectá con más personas y generá confianza desde el primer clic.",
     color: "#4FD4E4",
-    position: "top" as const,
+    position: "top",
   },
   {
+    id: "systems",
     icon: Workflow,
-    title: "Sistemas Internos y Automatización",
-    description:
-      "Creamos herramientas personalizadas (gestión de pedidos, facturas, stock, agendas o flujos de trabajo) que te ahorran tiempo.",
-    benefit: "Ganá orden, eficiencia y autonomía.",
     color: "#D55FA3",
-    position: "bottom" as const,
+    position: "bottom",
   },
   {
+    id: "advisory",
     icon: Compass,
-    title: "Acompañamiento Estratégico",
-    description:
-      "No solo diseñamos: analizamos tus procesos y objetivos para que cada solución digital impulse tus resultados.",
-    benefit: "Tomá decisiones con claridad y foco.",
     color: "#4FD4E4",
-    position: "top" as const,
+    position: "top",
   },
-] as const;
+];
 
 function BreathingParticle({
   x,
@@ -140,6 +147,7 @@ function LineGlow({
 }
 
 export function ServicesGrid() {
+  const { services: servicesCopy } = useDictionary();
   const { allowMotion, shouldReduceMotion } = useMotionPreferences();
   const [activeNode, setActiveNode] = useState<number | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -147,7 +155,10 @@ export function ServicesGrid() {
   const horizontalPadding = `max(1.5rem, calc((100vw - ${CARD_WIDTH}px) / 2))`;
 
   return (
-    <section className="relative flex min-h-[80vh] flex-col overflow-hidden md:min-h-screen">
+    <section
+      id="services"
+      className="relative flex min-h-[80vh] flex-col overflow-hidden scroll-mt-28 md:min-h-screen"
+    >
       <div className="absolute inset-0 bg-[#111418]" />
 
       {!shouldReduceMotion && (
@@ -241,11 +252,10 @@ export function ServicesGrid() {
             className="mb-6 text-4xl text-white tracking-tight md:text-5xl"
             style={{ fontFamily: "Space Grotesk, sans-serif" }}
           >
-            Servicios
+            {servicesCopy.heading}
           </h2>
           <p className="mx-auto mb-8 max-w-2xl text-xl text-[#AAB7C4]">
-            Unimos diseño, automatización y estrategia para que cada punto de
-            contacto digital se sienta consistente, humano y listo para crecer.
+            {servicesCopy.description}
           </p>
 
           <motion.div
@@ -266,7 +276,7 @@ export function ServicesGrid() {
               className="flex items-center gap-2 text-sm text-[#AAB7C4]/80 tracking-wide"
               style={{ fontFamily: "Geist Mono, monospace" }}
             >
-              Deslizá para descubrir cómo trabajamos
+              {servicesCopy.scrollHint}
               <motion.span
                 animate={
                   allowMotion
@@ -311,20 +321,6 @@ export function ServicesGrid() {
         </motion.div>
 
         <div className="relative flex flex-1 items-center">
-          <div
-            className="pointer-events-none absolute left-0 top-0 bottom-0 z-30 w-32 md:w-64"
-            style={{
-              background:
-                "linear-gradient(to right, #111418 0%, #111418 20%, transparent 100%)",
-            }}
-          />
-          <div
-            className="pointer-events-none absolute right-0 top-0 bottom-0 z-30 w-32 md:w-64"
-            style={{
-              background:
-                "linear-gradient(to left, #111418 0%, #111418 20%, transparent 100%)",
-            }}
-          />
 
           <div className="pointer-events-none absolute inset-0 z-10">
             <div className="relative flex h-full w-full items-center">
@@ -391,13 +387,13 @@ export function ServicesGrid() {
                 <BreathingParticle x="1320" color="#D55FA3" delay={2.4} allowMotion={allowMotion} />
                 <BreathingParticle x="1640" color="#4FD4E4" delay={3.2} allowMotion={allowMotion} />
 
-                {services.map((service, index) => {
+                {serviceNodes.map((service, index) => {
                   const xPos = 280 + index * 320;
                   const yStart = 300;
                   const yEnd = service.position === "top" ? 100 : 500;
 
                   return (
-                    <g key={`line-group-${service.title}`}>
+                    <g key={`line-group-${service.id}`}>
                       <line
                         x1={xPos}
                         y1={yStart}
@@ -450,7 +446,7 @@ export function ServicesGrid() {
           </div>
           <style>{`
             ${allowMotion
-              ? services
+              ? serviceNodes
                   .map(
                     (_, index) => `
               @keyframes line-pulse-${index} {
@@ -480,45 +476,49 @@ export function ServicesGrid() {
                   width: horizontalPadding,
                 }}
               />
-              {services.map((service, index) => (
-                <motion.div
-                  key={service.title}
-                  tabIndex={0}
-                  className={`group relative flex h-full w-[360px] flex-shrink-0 snap-center flex-col rounded-[32px] border border-white/10 bg-[#0E1C26]/80 p-8 transition-all duration-500 ease-out will-change-transform focus:outline-none ${
-                    shouldReduceMotion ? "" : "backdrop-blur-xl"
-                  }`}
-                  style={{
-                    borderColor:
-                      activeNode === index ? `${service.color}35` : "rgba(255,255,255,0.08)",
-                    boxShadow:
-                      activeNode === index
-                        ? `0 30px 80px ${service.color}22`
-                        : "0 12px 35px rgba(8, 14, 20, 0.65)",
-                    background:
-                      activeNode === index
-                        ? `linear-gradient(150deg, rgba(14, 28, 38, 0.95), rgba(18, 38, 52, 0.78))`
-                        : "linear-gradient(150deg, rgba(12, 24, 32, 0.9), rgba(10, 20, 28, 0.72))",
-                    transformOrigin: "center",
-                  }}
-                  onFocus={() => setActiveNode(index)}
-                  onBlur={() => setActiveNode(null)}
-                  onMouseEnter={() => setActiveNode(index)}
-                  onMouseLeave={() => setActiveNode(null)}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  whileHover={
-                    allowMotion
-                      ? {
-                          scale: 1.045,
-                          y: -12,
-                          boxShadow: `0 36px 90px ${service.color}28`,
-                        }
-                      : { scale: 1.015 }
-                  }
-                  whileTap={{ scale: 0.98 }}
-                >
+              {serviceNodes.map((service, index) => {
+                const serviceContent = servicesCopy.items[service.id];
+                const isActive = activeNode === index;
+
+                return (
+                  <motion.div
+                    key={service.id}
+                    tabIndex={0}
+                    className={`group relative flex h-full w-[360px] flex-shrink-0 snap-center flex-col rounded-[32px] border border-white/10 bg-[#0E1C26]/80 p-8 transition-all duration-500 ease-out will-change-transform focus:outline-none ${
+                      shouldReduceMotion ? "" : "backdrop-blur-xl"
+                    }`}
+                    style={{
+                      borderColor:
+                        isActive ? `${service.color}35` : "rgba(255,255,255,0.08)",
+                      boxShadow:
+                        isActive
+                          ? `0 30px 80px ${service.color}22`
+                          : "0 12px 35px rgba(8, 14, 20, 0.65)",
+                      background:
+                        isActive
+                          ? `linear-gradient(150deg, rgba(14, 28, 38, 0.95), rgba(18, 38, 52, 0.78))`
+                          : "linear-gradient(150deg, rgba(12, 24, 32, 0.9), rgba(10, 20, 28, 0.72))",
+                      transformOrigin: "center",
+                    }}
+                    onFocus={() => setActiveNode(index)}
+                    onBlur={() => setActiveNode(null)}
+                    onMouseEnter={() => setActiveNode(index)}
+                    onMouseLeave={() => setActiveNode(null)}
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    whileHover={
+                      allowMotion
+                        ? {
+                            scale: 1.045,
+                            y: -12,
+                            boxShadow: `0 36px 90px ${service.color}28`,
+                          }
+                        : { scale: 1.015 }
+                    }
+                    whileTap={{ scale: 0.98 }}
+                  >
                   <div
                     className="pointer-events-none absolute inset-0 rounded-[32px] opacity-20 transition duration-500 group-hover:opacity-80"
                     style={{
@@ -536,16 +536,16 @@ export function ServicesGrid() {
                       className="mt-5 text-2xl text-white"
                       style={{ fontFamily: "Space Grotesk, sans-serif" }}
                     >
-                      {service.title}
+                      {serviceContent.title}
                     </h3>
                     <p className="mt-4 text-base leading-relaxed text-[#AAB7C4]">
-                      {service.description}
+                      {serviceContent.description}
                     </p>
 
                     <motion.div
                       className="mt-10 rounded-2xl border border-white/10 bg-[#101d27]/60 p-5"
                       animate={
-                        activeNode === index
+                        isActive
                           ? {
                               y: -8,
                               opacity: 1,
@@ -559,11 +559,11 @@ export function ServicesGrid() {
                       }
                       style={{
                         background:
-                          activeNode === index
+                          isActive
                             ? `linear-gradient(145deg, ${service.color}1F, rgba(10, 28, 38, 0.9))`
                             : "linear-gradient(145deg, rgba(10, 24, 32, 0.9), rgba(10, 24, 32, 0.65))",
                         borderColor:
-                          activeNode === index
+                          isActive
                             ? `${service.color}55`
                             : "rgba(255,255,255,0.08)",
                       }}
@@ -576,10 +576,10 @@ export function ServicesGrid() {
                           fontFamily: "Geist Mono, monospace",
                         }}
                       >
-                        <span>Beneficio clave</span>
+                        <span>{servicesCopy.keyBenefitLabel}</span>
                         <motion.span
                           animate={
-                            activeNode === index && allowMotion
+                            isActive && allowMotion
                               ? { x: [0, 8, 0] }
                               : undefined
                           }
@@ -593,12 +593,13 @@ export function ServicesGrid() {
                         </motion.span>
                       </div>
                       <p className="mt-4 text-base leading-relaxed text-[#F1F5F9]">
-                        {service.benefit}
+                        {serviceContent.benefit}
                       </p>
                     </motion.div>
                   </div>
                 </motion.div>
-              ))}
+                );
+              })}
               <div
                 aria-hidden
                 className="flex-shrink-0"

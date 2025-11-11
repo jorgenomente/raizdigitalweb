@@ -1,14 +1,30 @@
 'use client';
 
+import { Fragment, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Mail, MessageSquare } from "lucide-react";
+import { ArrowRight, MessageSquare, User } from "lucide-react";
+import { useDictionary } from "@/components/providers/translation-provider";
 import { useMotionPreferences } from "@/lib/motion-preferences";
 
 export function ContactSection() {
+  const { contact } = useDictionary();
   const { allowMotion, shouldReduceMotion } = useMotionPreferences();
+  const [clientName, setClientName] = useState("");
+  const [message, setMessage] = useState(() => contact.defaultMessage);
+
+  const handleContact = () => {
+    const encodedMessage = encodeURIComponent(
+      `${message}${clientName ? `\nNombre o negocio: ${clientName}` : ""}`
+    );
+    const whatsappUrl = `https://wa.me/5491171139469?text=${encodedMessage}`;
+    window.open(whatsappUrl, "_blank");
+  };
 
   return (
-    <section className="relative overflow-hidden px-6 py-32">
+    <section
+      id="contact"
+      className="relative overflow-hidden px-6 py-32 scroll-mt-28"
+    >
       <div className="absolute inset-0 bg-gradient-to-br from-[#0E1C26] via-[#111418] to-[#0E1C26]" />
 
       {!shouldReduceMotion && (
@@ -62,13 +78,14 @@ export function ContactSection() {
             className="mb-6 text-4xl text-white md:text-6xl"
             style={{ fontFamily: "Space Grotesk, sans-serif" }}
           >
-            ¿Listo para crear tu{" "}
+            {contact.titleBeforeHighlight}{" "}
             <span className="bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3] bg-clip-text text-transparent">
-              sistema?
+              {contact.titleHighlight}
             </span>
+            {contact.titleAfterHighlight ? ` ${contact.titleAfterHighlight}` : ""}
           </h2>
           <p className="mx-auto max-w-2xl text-xl text-[#AAB7C4]">
-            Conectemos y diseñemos experiencias digitales que evolucionan.
+            {contact.description}
           </p>
         </motion.div>
 
@@ -91,13 +108,15 @@ export function ContactSection() {
                 className="block text-sm tracking-wide text-[#AAB7C4]"
                 style={{ fontFamily: "Geist Mono, monospace" }}
               >
-                TU EMAIL
+                {contact.nameLabel}
               </label>
               <div className="group relative">
-                <Mail className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#4FD4E4] opacity-70" />
+                <User className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#4FD4E4] opacity-70" />
                 <input
-                  type="email"
-                  placeholder="contacto@tuempresa.com"
+                  type="text"
+                  placeholder={contact.namePlaceholder}
+                  value={clientName}
+                  onChange={(event) => setClientName(event.target.value)}
                   className="w-full rounded-lg border border-[#AAB7C4]/20 bg-[#111418] py-4 pl-12 pr-4 text-white placeholder:text-[#AAB7C4]/50 transition-all duration-300 focus:outline-none focus:border-[#4FD4E4] focus:shadow-[0_0_20px_rgba(79,212,228,0.2)]"
                 />
               </div>
@@ -108,25 +127,30 @@ export function ContactSection() {
                 className="block text-sm tracking-wide text-[#AAB7C4]"
                 style={{ fontFamily: "Geist Mono, monospace" }}
               >
-                MENSAJE
+                {contact.messageLabel}
               </label>
               <div className="group relative">
                 <MessageSquare className="absolute left-4 top-4 h-5 w-5 text-[#D55FA3] opacity-70" />
                 <textarea
                   rows={4}
-                  placeholder="Cuéntanos sobre tu proyecto..."
+                  value={message}
+                  onChange={(event) => setMessage(event.target.value)}
                   className="w-full resize-none rounded-lg border border-[#AAB7C4]/20 bg-[#111418] py-4 pl-12 pr-4 text-white placeholder:text-[#AAB7C4]/50 transition-all duration-300 focus:outline-none focus:border-[#D55FA3] focus:shadow-[0_0_20px_rgba(213,95,163,0.2)]"
                 />
               </div>
             </div>
 
             <div className="flex justify-center pt-4">
-              <button className="group relative overflow-hidden rounded-lg bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3] px-10 py-4 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(79,212,228,0.6)]">
+              <button
+                type="button"
+                onClick={handleContact}
+                className="group relative overflow-hidden rounded-lg bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3] px-10 py-4 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(79,212,228,0.6)]"
+              >
                 <span
                   className="relative z-10 flex items-center gap-2 text-[#111418]"
                   style={{ fontFamily: "Space Grotesk, sans-serif" }}
                 >
-                  Contactar equipo
+                  {contact.buttonLabel}
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </span>
               </button>
@@ -145,29 +169,22 @@ export function ContactSection() {
             className="text-[#AAB7C4]"
             style={{ fontFamily: "Geist Mono, monospace" }}
           >
-            <span className="text-[#4FD4E4]">→</span> contacto@raizdigital.com
+            {contact.contactLine}
           </p>
           <div className="flex items-center justify-center gap-8 pt-4">
-            <a
-              href="#"
-              className="text-[#AAB7C4] transition-colors duration-300 hover:text-[#4FD4E4]"
-            >
-              LinkedIn
-            </a>
-            <span className="text-[#AAB7C4]/30">•</span>
-            <a
-              href="#"
-              className="text-[#AAB7C4] transition-colors duration-300 hover:text-[#D55FA3]"
-            >
-              Instagram
-            </a>
-            <span className="text-[#AAB7C4]/30">•</span>
-            <a
-              href="#"
-              className="text-[#AAB7C4] transition-colors duration-300 hover:text-[#4FD4E4]"
-            >
-              Behance
-            </a>
+            {contact.socials.map((social, index) => (
+              <Fragment key={social.label}>
+                <a
+                  href={social.href}
+                  className="text-[#AAB7C4] transition-colors duration-300 hover:text-[#4FD4E4]"
+                >
+                  {social.label}
+                </a>
+                {index < contact.socials.length - 1 ? (
+                  <span className="text-[#AAB7C4]/30">•</span>
+                ) : null}
+              </Fragment>
+            ))}
           </div>
         </motion.div>
       </div>
@@ -181,14 +198,13 @@ export function ContactSection() {
       >
         <div className="flex flex-col items-center gap-4 text-sm text-[#AAB7C4]/70 md:flex-row md:justify-between">
           <p style={{ fontFamily: "Geist Mono, monospace" }}>
-            © {new Date().getFullYear()} Raíz Digital. Todos los derechos
-            reservados.
+            {contact.footerNote.replace("{year}", `${new Date().getFullYear()}`)}
           </p>
           <p className="flex items-center gap-2">
             <span
               className={`h-2 w-2 rounded-full bg-[#4FD4E4] ${allowMotion ? "animate-pulse" : ""}`}
             />
-            Sistema activo
+            {contact.systemStatus}
           </p>
         </div>
       </motion.div>

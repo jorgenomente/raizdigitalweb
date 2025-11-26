@@ -154,10 +154,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1
-            className="mb-8 text-5xl text-white md:text-7xl"
-            style={{ fontFamily: "Space Grotesk, sans-serif" }}
-          >
+          <h1 className="font-space-grotesk mb-8 text-5xl text-white md:text-7xl">
             {hero.title}{" "}
             <span className="bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3] bg-clip-text text-transparent">
               {hero.highlight}
@@ -179,11 +176,8 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <button className="group relative overflow-hidden rounded-lg bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3] px-8 py-4 font-medium text-[#111418] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(79,212,228,0.5)]">
-            <span
-              className="relative z-10 flex items-center gap-2"
-              style={{ fontFamily: "Space Grotesk, sans-serif" }}
-            >
+          <button className="group relative overflow-hidden rounded-lg bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3] px-8 py-4 font-space-grotesk font-medium text-[#111418] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(79,212,228,0.5)]">
+            <span className="relative z-10 flex items-center gap-2">
               {hero.cta}
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </span>

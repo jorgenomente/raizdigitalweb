@@ -167,7 +167,7 @@ function ProjectCard({
         </a>
 
         <div className="relative px-6 pb-6 pt-6 md:px-8 md:pb-8">
-          <h3 className="mb-2 text-xl md:text-2xl" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
+          <h3 className="font-space-grotesk mb-2 text-xl md:text-2xl">
             <a
               href={linkHref}
               target={linkTarget}
@@ -193,9 +193,8 @@ function ProjectCard({
             {copy.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full border px-2.5 py-1 text-xs transition-all md:px-3 md:py-1.5"
+                className="font-geist-mono rounded-full border px-2.5 py-1 text-xs transition-all md:px-3 md:py-1.5"
                 style={{
-                  fontFamily: "Geist Mono, monospace",
                   borderColor: `${project.color}40`,
                   background: `${project.color}10`,
                   color: project.color,
@@ -380,10 +379,7 @@ export function Projects() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <h2
-            className="mb-6 text-4xl text-white tracking-tight md:text-5xl lg:text-6xl"
-            style={{ fontFamily: "Space Grotesk, sans-serif" }}
-          >
+          <h2 className="font-space-grotesk mb-6 text-4xl text-white tracking-tight md:text-5xl lg:text-6xl">
             {projectsCopy.heading}
           </h2>
           <p className="mx-auto max-w-3xl text-lg text-[#AAB7C4] leading-relaxed md:text-xl">

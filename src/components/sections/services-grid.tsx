@@ -248,10 +248,7 @@ export function ServicesGrid() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <h2
-            className="mb-6 text-4xl text-white tracking-tight md:text-5xl"
-            style={{ fontFamily: "Space Grotesk, sans-serif" }}
-          >
+          <h2 className="font-space-grotesk mb-6 text-4xl text-white tracking-tight md:text-5xl">
             {servicesCopy.heading}
           </h2>
           <p className="mx-auto mb-8 max-w-2xl text-xl text-[#AAB7C4]">
@@ -273,8 +270,7 @@ export function ServicesGrid() {
             }
           >
             <p
-              className="flex items-center gap-2 text-sm text-[#AAB7C4]/80 tracking-wide"
-              style={{ fontFamily: "Geist Mono, monospace" }}
+              className="font-geist-mono flex items-center gap-2 text-sm text-[#AAB7C4]/80 tracking-wide"
             >
               {servicesCopy.scrollHint}
               <motion.span
@@ -532,10 +528,7 @@ export function ServicesGrid() {
                       className="h-10 w-10"
                       style={{ color: service.color }}
                     />
-                    <h3
-                      className="mt-5 text-2xl text-white"
-                      style={{ fontFamily: "Space Grotesk, sans-serif" }}
-                    >
+                    <h3 className="font-space-grotesk mt-5 text-2xl text-white">
                       {serviceContent.title}
                     </h3>
                     <p className="mt-4 text-base leading-relaxed text-[#AAB7C4]">
@@ -570,10 +563,9 @@ export function ServicesGrid() {
                       transition={{ duration: 0.45, ease: "easeOut" }}
                     >
                       <div
-                        className="flex items-center gap-3 text-xs uppercase tracking-[0.32em]"
+                        className="font-geist-mono flex items-center gap-3 text-xs uppercase tracking-[0.32em]"
                         style={{
                           color: service.color,
-                          fontFamily: "Geist Mono, monospace",
                         }}
                       >
                         <span>{servicesCopy.keyBenefitLabel}</span>

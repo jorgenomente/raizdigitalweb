@@ -34,8 +34,8 @@ export function PageClient({
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-6">
             <div className="flex items-center justify-between gap-4">
               <Image
-                src="/isologotipo blanco.png"
-                alt="Isologotipo Raíz Digital"
+                src="/logo2.png"
+                alt="Logo Raíz Digital"
                 width={160}
                 height={48}
                 priority

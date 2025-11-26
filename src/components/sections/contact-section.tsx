@@ -74,10 +74,7 @@ export function ContactSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <h2
-            className="mb-6 text-4xl text-white md:text-6xl"
-            style={{ fontFamily: "Space Grotesk, sans-serif" }}
-          >
+          <h2 className="font-space-grotesk mb-6 text-4xl text-white md:text-6xl">
             {contact.titleBeforeHighlight}{" "}
             <span className="bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3] bg-clip-text text-transparent">
               {contact.titleHighlight}
@@ -105,8 +102,7 @@ export function ContactSection() {
           <div className="relative space-y-8">
             <div className="space-y-4">
               <label
-                className="block text-sm tracking-wide text-[#AAB7C4]"
-                style={{ fontFamily: "Geist Mono, monospace" }}
+                className="font-geist-mono block text-sm tracking-wide text-[#AAB7C4]"
               >
                 {contact.nameLabel}
               </label>
@@ -123,12 +119,11 @@ export function ContactSection() {
             </div>
 
             <div className="space-y-4">
-              <label
-                className="block text-sm tracking-wide text-[#AAB7C4]"
-                style={{ fontFamily: "Geist Mono, monospace" }}
-              >
-                {contact.messageLabel}
-              </label>
+                <label
+                  className="font-geist-mono block text-sm tracking-wide text-[#AAB7C4]"
+                >
+                  {contact.messageLabel}
+                </label>
               <div className="group relative">
                 <MessageSquare className="absolute left-4 top-4 h-5 w-5 text-[#D55FA3] opacity-70" />
                 <textarea
@@ -146,10 +141,7 @@ export function ContactSection() {
                 onClick={handleContact}
                 className="group relative overflow-hidden rounded-lg bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3] px-10 py-4 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(79,212,228,0.6)]"
               >
-                <span
-                  className="relative z-10 flex items-center gap-2 text-[#111418]"
-                  style={{ fontFamily: "Space Grotesk, sans-serif" }}
-                >
+                <span className="font-space-grotesk relative z-10 flex items-center gap-2 text-[#111418]">
                   {contact.buttonLabel}
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </span>
@@ -166,8 +158,7 @@ export function ContactSection() {
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           <p
-            className="text-[#AAB7C4]"
-            style={{ fontFamily: "Geist Mono, monospace" }}
+            className="font-geist-mono text-[#AAB7C4]"
           >
             {contact.contactLine}
           </p>
@@ -197,7 +188,7 @@ export function ContactSection() {
         transition={{ duration: 0.8, delay: 0.6 }}
       >
         <div className="flex flex-col items-center gap-4 text-sm text-[#AAB7C4]/70 md:flex-row md:justify-between">
-          <p style={{ fontFamily: "Geist Mono, monospace" }}>
+          <p className="font-geist-mono">
             {contact.footerNote.replace("{year}", `${new Date().getFullYear()}`)}
           </p>
           <p className="flex items-center gap-2">

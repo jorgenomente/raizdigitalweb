@@ -218,8 +218,7 @@ export function Manifesto() {
         transition={{ duration: 0.6, delay: 0.1 }}
       >
         <span
-          className="inline-flex items-center justify-center rounded-full border border-white/10 px-5 py-2 text-sm uppercase tracking-[0.4em] text-[#AAB7C4]/80"
-          style={{ fontFamily: "Geist Mono, monospace" }}
+          className="font-geist-mono inline-flex items-center justify-center rounded-full border border-white/10 px-5 py-2 text-sm uppercase tracking-[0.4em] text-[#AAB7C4]/80"
         >
           {manifesto.tagline}
         </span>
@@ -228,8 +227,7 @@ export function Manifesto() {
       <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center gap-16 text-center lg:flex-row lg:items-start lg:gap-20 lg:text-left">
         <div className="flex flex-1 flex-col items-center text-center lg:items-start lg:text-left">
           <motion.h2
-            className="mt-10 text-4xl text-white md:text-6xl"
-            style={{ fontFamily: "Space Grotesk, sans-serif" }}
+            className="font-space-grotesk mt-10 text-4xl text-white md:text-6xl"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

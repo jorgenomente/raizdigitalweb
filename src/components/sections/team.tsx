@@ -289,16 +289,12 @@ function TeamMemberCard({
         viewport={{ once: true }}
         transition={{ delay: 0.4 + index * 0.2 }}
       >
-        <h3
-          className="mb-2 text-2xl text-white md:text-3xl"
-          style={{ fontFamily: "Space Grotesk, sans-serif" }}
-        >
+        <h3 className="font-space-grotesk mb-2 text-2xl text-white md:text-3xl">
           {member.name}
         </h3>
         <p
-          className="text-sm tracking-wider"
+          className="font-geist-mono text-sm tracking-wider"
           style={{
-            fontFamily: "Geist Mono, monospace",
             color: member.color,
           }}
         >
@@ -382,10 +378,7 @@ export function Team() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <h2
-            className="mb-6 text-5xl text-white tracking-tight md:text-6xl"
-            style={{ fontFamily: "Space Grotesk, sans-serif" }}
-          >
+          <h2 className="font-space-grotesk mb-6 text-5xl text-white tracking-tight md:text-6xl">
             {teamCopy.heading}
           </h2>
           <p className="mx-auto max-w-3xl text-xl leading-relaxed text-[#AAB7C4]">
@@ -593,8 +586,7 @@ export function Team() {
               }
             />
             <p
-              className="text-xs tracking-widest text-[#AAB7C4]/60"
-              style={{ fontFamily: "Geist Mono, monospace" }}
+              className="font-geist-mono text-xs tracking-widest text-[#AAB7C4]/60"
             >
               RED ACTIVA · COLABORACIÓN EN TIEMPO REAL
             </p>

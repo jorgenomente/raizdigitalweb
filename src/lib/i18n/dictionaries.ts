@@ -9,8 +9,8 @@ export type SectionId =
   | "projects"
   | "team"
   | "contact";
-export type ServiceId = "strategy" | "webDesign" | "systems" | "advisory";
-export type ProjectId = "gestock" | "pew";
+export type ServiceId = "landing" | "strategy" | "webDesign" | "systems" | "advisory";
+export type ProjectId = "gestock" | "pew" | "miproveedor";
 export type TeamMemberId = "jorge" | "paola" | "samira";
 
 export type Dictionary = {
@@ -87,10 +87,10 @@ export type Dictionary = {
 const dictionaries: Record<Locale, Dictionary> = {
   es: {
     metadata: {
-      title: "The Cosmic Studio — Experiencias digitales bilingües",
+      title: "Cosmic Studio — Experiencias digitales",
       description:
-        "The Cosmic Studio crea experiencias, identidades y productos digitales que combinan estrategia, diseño y tecnología para impulsar resultados reales.",
-      ogTitle: "The Cosmic Studio — Experiencias digitales bilingües",
+        "Cosmic Studio crea experiencias, identidades y productos digitales que combinan estrategia, diseño y tecnología para impulsar resultados reales.",
+      ogTitle: "Cosmic Studio — Experiencias digitales bilingües",
       ogDescription:
         "Diseñamos sitios web, identidades y sistemas funcionales para generar experiencias y resultados reales.",
     },
@@ -135,32 +135,39 @@ const dictionaries: Record<Locale, Dictionary> = {
       description:
         "Unimos diseño, automatización y estrategia para que cada punto de contacto digital se sienta consistente, humano y listo para crecer.",
       scrollHint: "Deslizá para descubrir cómo trabajamos",
-      keyBenefitLabel: "Beneficio clave",
+      keyBenefitLabel: "Ideal para",
       items: {
-        strategy: {
-          title: "Estrategia y Estructura Digital",
+        landing: {
+          title: "Diseño de landing pages y sitios web",
           description:
-            "Creamos la base de tu producto: cómo funciona, cómo se navega y cómo se entiende. Damos forma clara a tu idea antes de pasar a diseño o desarrollo.",
+            "Páginas claras, modernas y pensadas para convertir. Rediseñamos tu web para darle propósito, mejorar el mensaje y transmitir profesionalismo desde el primer vistazo.",
           benefit:
-            "Incluye: Arquitectura de información · Investigación y flujos UX · Estrategia de producto · Naming y narrativa.",
+            "Emprendedores y empresas que necesitan una web más atractiva, actualizada y enfocada en resultados.",
+        },
+        strategy: {
+          title: "Diseño de software a medida",
+          description:
+            "Sistemas web que ordenan tu operación y se adaptan a cómo trabaja tu negocio. Eliminá planillas, automatizá tareas y centralizá todo en un solo lugar.\n\nIncluye: dashboards, automatizaciones, integraciones, multitenant y desarrollo end-to-end.",
+          benefit:
+            "Tiendas, distribuidores y equipos con procesos desordenados.",
         },
         webDesign: {
-          title: "Diseño Web Atractivo",
+          title: "Diseño UX/UI + Producto Digital",
           description:
-            "Sitios que reflejan la esencia de tu marca con estética cuidada, estructura clara y buena experiencia en todos los dispositivos.",
-          benefit: "Conectá con más personas y generá confianza desde el primer clic.",
+            "Convertimos ideas en productos intuitivos y listos para usar. Diseños que reducen fricción, mejoran procesos y elevan la experiencia del usuario.\n\nIncluye: research, flujos, wireframes, UI systems, prototipos y validaciones.",
+          benefit: "Startups, nuevos productos y plataformas que necesitan escalar.",
         },
         systems: {
-          title: "Sistemas Internos y Automatización",
+          title: "Sistemas Operativos para Negocios",
           description:
-            "Creamos herramientas personalizadas (gestión de pedidos, facturas, stock, agendas o flujos de trabajo) que te ahorran tiempo.",
-          benefit: "Ganá orden, eficiencia y autonomía.",
+            "Ordenamos tus procesos para que tu operación fluya sin caos. Combinamos estrategia, UX operativo y software para eliminar cuellos de botella. \n\nIncluye: mapeo de procesos, flujos optimizados, sistemas de control y SOPs digitales",
+          benefit: "Equipos con caos, sobrecarga o procesos informales.",
         },
         advisory: {
-          title: "Acompañamiento Estratégico",
+          title: "Consultoría en Producto + Estrategia Digital",
           description:
-            "No solo diseñamos: analizamos tus procesos y objetivos para que cada solución digital impulse tus resultados.",
-          benefit: "Tomá decisiones con claridad y foco.",
+            "Claridad para construir lo correcto. Te ayudamos a definir, validar y priorizar tu producto antes de invertir en desarrollo.",
+          benefit: "Founders, negocios en crecimiento, equipos sin claridad técnica.",
         },
       },
     },
@@ -172,7 +179,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       progressLabel: "Desplazamiento",
       items: {
         gestock: {
-          title: "Gestock",
+          title: "Nodux",
           subtitle:
             "Suite multitienda que orquesta inventarios, ventas y compras para tiendas físicas con datos en tiempo real.",
           tags: ["Product Design", "Desarrollo Web", "Automatización"],
@@ -183,10 +190,16 @@ const dictionaries: Record<Locale, Dictionary> = {
             "Asistente financiero personal que traduce tus metas en planes accionables con seguimiento inteligente y cercano.",
           tags: ["Product Strategy", "Finanzas", "UX/UI"],
         },
+        miproveedor: {
+          title: "MiProveedor.app",
+          subtitle:
+            "Red digital que conecta negocios con proveedores para optimizar pedidos y entregas en línea.",
+          tags: ["Product Design", "E-commerce", "Web App"],
+        },
       },
     },
     team: {
-      heading: "Equipo The Cosmic Studio",
+      heading: "Equipo Cosmic Studio",
       description: "Personas reales, mentes creativas y energía viva detrás del sistema.",
       members: {
         jorge: {
@@ -213,22 +226,22 @@ const dictionaries: Record<Locale, Dictionary> = {
       messageLabel: "MENSAJE",
       defaultMessage: "Me interesa crear un sistema para mi negocio",
       buttonLabel: "Contactar equipo",
-      contactLine: "→ contacto@thecosmicstudio.com",
+      contactLine: "→ info.cosmicst@gmail.com",
       socials: [
-        { label: "LinkedIn", href: "#" },
+        { label: "LinkedIn", href: "https://www.linkedin.com/company/cosmic-st/" },
         { label: "Instagram", href: "#" },
         { label: "Behance", href: "#" },
       ],
-      footerNote: "© {year} The Cosmic Studio. Todos los derechos reservados.",
+      footerNote: "© {year} Cosmic Studio. Todos los derechos reservados.",
       systemStatus: "Sistema activo",
     },
   },
   en: {
     metadata: {
-      title: "The Cosmic Studio — Bilingual digital experiences",
+      title: " Studio — Bilingual digital experiences",
       description:
-        "The Cosmic Studio builds experiences, identities, and digital products that blend strategy, design, and technology to drive real results.",
-      ogTitle: "The Cosmic Studio — Bilingual digital experiences",
+        "Cosmic Studio builds experiences, identities, and digital products that blend strategy, design, and technology to drive real results.",
+      ogTitle: "Cosmic Studio — Digital experiences",
       ogDescription:
         "We design websites, identities, and functional systems to deliver genuine experiences and measurable outcomes.",
     },
@@ -273,26 +286,33 @@ const dictionaries: Record<Locale, Dictionary> = {
       description:
         "We blend design, automation, and strategy so every digital touchpoint feels consistent, human, and ready to scale.",
       scrollHint: "Slide to see how we work",
-      keyBenefitLabel: "Key benefit",
+      keyBenefitLabel: "Ideal for",
       items: {
-        strategy: {
-          title: "Digital Strategy & Structure",
+        landing: {
+          title: "Landing Pages & Websites",
           description:
-            "We build the foundation of your product: how it works, how it is navigated, and how it is understood before moving into design or development.",
+            "Clear, modern pages built to convert. We redesign your site to add purpose, sharpen the message, and convey professionalism from the first glance.",
           benefit:
-            "Includes: Information architecture · UX research & flows · Product strategy · Naming and storytelling.",
+            "Entrepreneurs and companies that need a more attractive, up-to-date, results-focused website.",
+        },
+        strategy: {
+          title: "Custom Software Design",
+          description:
+            "Web systems that bring order to your operations and adapt to how your business works. Remove spreadsheets, automate tasks, and centralize everything in one place.\nIncludes dashboards, automations, integrations, multitenant setups, and end-to-end development.",
+          benefit:
+            "Retailers, distributors, and teams with disorganized processes.",
         },
         webDesign: {
-          title: "Striking Web Design",
+          title: "UX/UI & Digital Product Design",
           description:
-            "Sites that reflect your brand DNA with intentional aesthetics, clear structure, and great performance across devices.",
-          benefit: "Connect with more people and earn trust from the very first click.",
+            "We turn ideas into intuitive, ready-to-use products. Designs that reduce friction, improve processes, and elevate the user experience.\nIncludes research, flows, wireframes, UI systems, prototypes, and validation.",
+          benefit: "Startups, new products, and platforms that need to scale.",
         },
         systems: {
-          title: "Internal Systems & Automation",
+          title: "Business Operating Systems",
           description:
-            "We create custom tools (orders, invoices, stock, bookings, or workflows) that save time and remove friction.",
-          benefit: "Gain clarity, efficiency, and autonomy.",
+            "We streamline your processes so your operation flows without chaos. We combine strategy, operational UX, and software to remove bottlenecks.\nIncludes process mapping, optimized flows, control systems, and digital SOPs.",
+          benefit: "Teams facing chaos, overload, or informal processes.",
         },
         advisory: {
           title: "Strategic Advisory",
@@ -310,7 +330,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       progressLabel: "Scroll",
       items: {
         gestock: {
-          title: "Gestock",
+          title: "Nodux",
           subtitle:
             "Multi-store suite that syncs inventory, sales, and purchasing with real-time data for physical retailers.",
           tags: ["Product Design", "Web Development", "Automation"],
@@ -321,10 +341,16 @@ const dictionaries: Record<Locale, Dictionary> = {
             "Personal finance partner that translates your goals into actionable plans with intelligent, human follow-up.",
           tags: ["Product Strategy", "Finance", "UX/UI"],
         },
+        miproveedor: {
+          title: "MiProveedor.app",
+          subtitle:
+            "Digital network that connects businesses with suppliers to streamline online orders and deliveries.",
+          tags: ["Product Design", "E-commerce", "Web App"],
+        },
       },
     },
     team: {
-      heading: "The Cosmic Studio team",
+      heading: "Cosmic Studio team",
       description: "Real people, creative minds, and live energy behind the system.",
       members: {
         jorge: {
@@ -351,13 +377,13 @@ const dictionaries: Record<Locale, Dictionary> = {
       messageLabel: "MESSAGE",
       defaultMessage: "I'm interested in creating a system for my business",
       buttonLabel: "Contact the team",
-      contactLine: "→ contact@thecosmicstudio.com",
+      contactLine: "→ info.cosmicst@gmail.com",
       socials: [
-        { label: "LinkedIn", href: "#" },
+        { label: "LinkedIn", href: "https://www.linkedin.com/company/cosmic-st/" },
         { label: "Instagram", href: "#" },
         { label: "Behance", href: "#" },
       ],
-      footerNote: "© {year} The Cosmic Studio. All rights reserved.",
+      footerNote: "© {year} Cosmic Studio. All rights reserved.",
       systemStatus: "System online",
     },
   },

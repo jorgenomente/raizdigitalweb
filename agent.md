@@ -1,7 +1,7 @@
 # Agent Handbook
 
 ## 1. Misión y estado actual
-- Landing bilingüe para **The Cosmic Studio / Raíz Digital** sobre Next.js 15 (App Router) + React 19. Todo el copy y los CTAs viven en `src/lib/i18n/dictionaries.ts`, por lo que diseño y contenido viajan juntos.
+- Landing bilingüe para **Cosmic Studio / Raíz Digital** sobre Next.js 15 (App Router) + React 19. Todo el copy y los CTAs viven en `src/lib/i18n/dictionaries.ts`, por lo que diseño y contenido viajan juntos.
 - Dos idiomas soportados (`es`, `en`) con redirección automática vía `src/middleware.ts`. Todos los paths comienzan con `/[locale]`.
 - El layout público está montado en `src/components/page-client.tsx`; cada sección (hero, manifesto, services, projects, team, contact) es un componente client-side que usa `TranslationProvider`.
 - Objetivo del repo: tener un template de marketing/servicios con alto polish visual (Tailwind, animaciones con Framer Motion) listo para iterar features o duplicar para clientes.

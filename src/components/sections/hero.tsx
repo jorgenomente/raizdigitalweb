@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useMotionPreferences } from "@/lib/motion-preferences";
 import { useDictionary } from "@/components/providers/translation-provider";
@@ -176,12 +177,15 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <button className="group relative overflow-hidden rounded-lg bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3] px-8 py-4 font-space-grotesk font-medium text-[#111418] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(79,212,228,0.5)]">
+          <Link
+            href="#services"
+            className="group relative inline-flex overflow-hidden rounded-lg bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3] px-8 py-4 font-space-grotesk font-medium text-[#111418] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(79,212,228,0.5)]"
+          >
             <span className="relative z-10 flex items-center gap-2">
               {hero.cta}
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </span>
-          </button>
+          </Link>
         </motion.div>
 
         <motion.div

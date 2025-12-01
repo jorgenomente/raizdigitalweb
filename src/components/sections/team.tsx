@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { Linkedin } from "lucide-react";
 import { useDictionary } from "@/components/providers/translation-provider";
 import { ImageWithFallback } from "@/components/ui/image-with-fallback";
 import type { Dictionary, TeamMemberId } from "@/lib/i18n/dictionaries";
@@ -12,6 +14,7 @@ type TeamMemberConfig = {
   image: string;
   hoverImage?: string;
   color: string;
+  linkedin?: string;
 };
 
 type TeamMemberCopy = Dictionary["team"]["members"][TeamMemberId];
@@ -23,13 +26,15 @@ const teamMembers: TeamMemberConfig[] = [
     image: "/avatars/Jorge1.png",
     hoverImage: "/avatars/Jorge2.png",
     color: "#4FD4E4",
+    linkedin: "https://www.linkedin.com/in/jorgepulidodev/",
   },
   {
     id: "paola",
     name: "Paola",
     image: "/avatars/Paola1.png",
-    hoverImage: "/avatars/paola2.PNG",
+    hoverImage: "/paola2.jpeg",
     color: "#D55FA3",
+    linkedin: "https://www.linkedin.com/in/paola-zerpa-0329631a6",
   },
   {
     id: "samira",
@@ -110,6 +115,10 @@ function TeamMemberCard({
   allowMotion: boolean;
   shouldReduceMotion: boolean;
 }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isImageToggled, setIsImageToggled] = useState(false);
+
+  const isActive = isHovered || isImageToggled;
   const showHalo = !shouldReduceMotion;
   const showOrbitParticles = !shouldReduceMotion;
 
@@ -129,6 +138,20 @@ function TeamMemberCard({
       <motion.div
         className="group relative mb-6 cursor-pointer"
         whileHover={allowMotion && !shouldReduceMotion ? { scale: 1.05 } : undefined}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          setIsImageToggled(false);
+        }}
+        onClick={() => setIsImageToggled((prev) => !prev)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            setIsImageToggled((prev) => !prev);
+          }
+        }}
         transition={{ duration: 0.3 }}
       >
         {showHalo && (
@@ -224,24 +247,34 @@ function TeamMemberCard({
             boxShadow: `0 0 40px ${member.color}60, inset 0 0 30px ${member.color}15, 0 10px 30px rgba(0, 0, 0, 0.5)`,
           }}
         >
-          <div className="relative h-full w-full transition-transform duration-500 group-hover:scale-110">
+          <div
+            className={`relative h-full w-full transition-transform duration-500 group-hover:scale-110 ${
+              isActive ? "scale-110" : ""
+            }`}
+          >
             <ImageWithFallback
               src={member.image}
               alt={member.name}
               className={`absolute inset-0 h-full w-full object-cover opacity-100 transition-opacity duration-500 ${
-                member.hoverImage ? "group-hover:opacity-0" : ""
+                member.hoverImage
+                  ? `${isActive ? "opacity-0" : "opacity-100"} group-hover:opacity-0`
+                  : ""
               }`}
             />
             {member.hoverImage ? (
               <ImageWithFallback
                 src={member.hoverImage}
                 alt={`${member.name} alternate`}
-                className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                className={`absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100 ${
+                  isActive ? "opacity-100" : ""
+                }`}
               />
             ) : null}
           </div>
           <div
-            className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-30"
+            className={`absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-30 ${
+              isActive ? "opacity-30" : ""
+            }`}
             style={{
               background: `radial-gradient(circle at center, transparent 30%, ${member.color}60 100%)`,
             }}
@@ -289,9 +322,22 @@ function TeamMemberCard({
         viewport={{ once: true }}
         transition={{ delay: 0.4 + index * 0.2 }}
       >
-        <h3 className="font-space-grotesk mb-2 text-2xl text-white md:text-3xl">
-          {member.name}
-        </h3>
+        <div className="mb-2 flex items-center justify-center gap-3">
+          <h3 className="font-space-grotesk text-2xl text-white md:text-3xl">
+            {member.name}
+          </h3>
+          {member.linkedin ? (
+            <a
+              href={member.linkedin}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`LinkedIn de ${member.name}`}
+              className="rounded-full border border-white/10 p-2 text-white transition hover:scale-105 hover:border-white/30 hover:text-white"
+            >
+              <Linkedin className="h-4 w-4" />
+            </a>
+          ) : null}
+        </div>
         <p
           className="font-geist-mono text-sm tracking-wider"
           style={{

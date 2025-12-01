@@ -22,13 +22,19 @@ const projectCards: ProjectCardConfig[] = [
     id: "gestock",
     image: "/gestock.png",
     color: "#4FD4E4",
-    href: "https://gestock-multitenant.vercel.app/demo",
+    href: "https://nodux1.vercel.app/demo",
   },
   {
     id: "pew",
     image: "/pew.png",
     color: "#D55FA3",
     href: "https://pew-beta.vercel.app/demo",
+  },
+  {
+    id: "miproveedor",
+    image: "/miproveedor.svg",
+    color: "#7C8CFF",
+    href: "https://miproveedor.app/",
   },
 ];
 
@@ -79,7 +85,7 @@ function ProjectCard({
 
   return (
     <div
-      className="w-[80vw] flex-shrink-0 sm:w-[350px] md:w-[380px] lg:w-[420px]"
+      className="w-[80vw] flex-shrink-0 snap-center sm:w-[350px] md:w-[380px] lg:w-[420px]"
       onMouseMove={handleMouseMove}
       onMouseEnter={() => !isScrolling && enableInteractiveHover && setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
@@ -261,7 +267,6 @@ export function Projects() {
   const { projects: projectsCopy } = useDictionary();
   const { allowMotion, shouldReduceMotion } = useMotionPreferences();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -271,9 +276,6 @@ export function Projects() {
 
     const handleScroll = () => {
       setIsScrolling(true);
-      const { scrollLeft, scrollWidth, clientWidth } = container;
-      const progress = scrollLeft / (scrollWidth - clientWidth);
-      setScrollProgress(progress);
 
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
@@ -283,29 +285,10 @@ export function Projects() {
       }, 150);
     };
 
-    const handleWheel = (event: WheelEvent) => {
-      const { scrollLeft, scrollWidth, clientWidth } = container;
-      const canScrollLeft = scrollLeft > 0;
-      const canScrollRight = scrollLeft < scrollWidth - clientWidth - 1;
-
-      if (
-        Math.abs(event.deltaX) > Math.abs(event.deltaY) ||
-        (canScrollLeft && event.deltaY < 0) ||
-        (canScrollRight && event.deltaY > 0)
-      ) {
-        event.preventDefault();
-        const scrollAmount =
-          (event.deltaX !== 0 ? event.deltaX : event.deltaY) * 1.2;
-        container.scrollLeft += scrollAmount;
-      }
-    };
-
     container.addEventListener("scroll", handleScroll, { passive: true });
-    container.addEventListener("wheel", handleWheel, { passive: false });
 
     return () => {
       container.removeEventListener("scroll", handleScroll);
-      container.removeEventListener("wheel", handleWheel);
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
@@ -411,6 +394,7 @@ export function Projects() {
               msOverflowStyle: "none",
               WebkitOverflowScrolling: "touch",
               scrollSnapType: "x proximity",
+              scrollPadding: "0 18vw",
               overscrollBehaviorX: "contain",
             }}
           >
@@ -419,7 +403,7 @@ export function Projects() {
                 display: none;
               }
             `}</style>
-            <div className="projects-track flex gap-6 justify-center">
+            <div className="projects-track flex snap-x gap-6 justify-start pl-12 pr-[18vw] md:pl-0 md:pr-0 md:justify-center">
               {projectCards.map((project, index) => (
                 <ProjectCard
                   key={project.id}
@@ -435,17 +419,6 @@ export function Projects() {
             </div>
           </div>
 
-          <div className="mt-8 flex items-center justify-center gap-3 px-6 text-sm text-[#AAB7C4]/70">
-            <span>{projectsCopy.progressLabel}</span>
-            <div className="relative h-1 w-32 overflow-hidden rounded-full bg-[#1C2C35]">
-              <motion.div
-                className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3]"
-                style={{ width: `${Math.max(8, scrollProgress * 100)}%` }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              />
-            </div>
-            <span>{Math.round(scrollProgress * 100)}%</span>
-          </div>
         </div>
       </div>
     </section>

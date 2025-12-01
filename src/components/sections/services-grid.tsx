@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
-import { ArrowRight, Palette, Workflow, Compass, Layers3 } from "lucide-react";
+import { ArrowRight, Palette, Workflow, Compass, Layers3, Layout } from "lucide-react";
 import { useDictionary } from "@/components/providers/translation-provider";
 import type { ServiceId } from "@/lib/i18n/dictionaries";
 import { useMotionPreferences } from "@/lib/motion-preferences";
@@ -16,6 +16,12 @@ type ServiceNode = {
 };
 
 const serviceNodes: ServiceNode[] = [
+  {
+    id: "landing",
+    icon: Layout,
+    color: "#F5B953",
+    position: "top",
+  },
   {
     id: "strategy",
     icon: Layers3,
@@ -531,7 +537,7 @@ export function ServicesGrid() {
                     <h3 className="font-space-grotesk mt-5 text-2xl text-white">
                       {serviceContent.title}
                     </h3>
-                    <p className="mt-4 text-base leading-relaxed text-[#AAB7C4]">
+                    <p className="mt-4 whitespace-pre-line text-base leading-relaxed text-[#AAB7C4]">
                       {serviceContent.description}
                     </p>
 

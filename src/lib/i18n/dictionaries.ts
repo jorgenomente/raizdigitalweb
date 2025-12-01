@@ -10,7 +10,7 @@ export type SectionId =
   | "team"
   | "contact";
 export type ServiceId = "landing" | "strategy" | "webDesign" | "systems" | "advisory";
-export type ProjectId = "gestock" | "pew" | "miproveedor";
+export type ProjectId = "gestock" | "pew" | "miproveedor" | "tiendix";
 export type TeamMemberId = "jorge" | "paola" | "samira";
 
 export type Dictionary = {
@@ -48,17 +48,17 @@ export type Dictionary = {
       benefit: string;
     }>;
   };
-  projects: {
-    heading: string;
-    description: string;
-    viewCase: string;
-    progressLabel: string;
-    items: Record<ProjectId, {
-      title: string;
-      subtitle: string;
-      tags: string[];
-    }>;
-  };
+    projects: {
+      heading: string;
+      description: string;
+      viewCase: string;
+      progressLabel: string;
+      items: Record<ProjectId, {
+        title: string;
+        subtitle: string;
+        tags: string[];
+      }>;
+    };
   team: {
     heading: string;
     description: string;
@@ -195,6 +195,12 @@ const dictionaries: Record<Locale, Dictionary> = {
           subtitle:
             "Red digital que conecta negocios con proveedores para optimizar pedidos y entregas en línea.",
           tags: ["Product Design", "E-commerce", "Web App"],
+        },
+        tiendix: {
+          title: "Tiendix",
+          subtitle:
+            "Plataforma de comercio electrónico que permite a pequeños negocios vender online con herramientas profesionales.",
+          tags: ["E-commerce", "Desarrollo Web", "Product Design"],
         },
       },
     },
@@ -346,6 +352,12 @@ const dictionaries: Record<Locale, Dictionary> = {
           subtitle:
             "Digital network that connects businesses with suppliers to streamline online orders and deliveries.",
           tags: ["Product Design", "E-commerce", "Web App"],
+        },
+        tiendix: {
+          title: "Tiendix",
+          subtitle:
+            "E-commerce platform that helps small businesses sell online with professional tools.",
+          tags: ["E-commerce", "Web Development", "Product Design"],
         },
       },
     },

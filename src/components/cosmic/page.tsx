@@ -1,8 +1,8 @@
 'use client';
 
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { ArrowRight, BarChart3, Globe, Grid, HelpCircle, MessageCircle, User, Linkedin } from 'lucide-react';
 import type { Dictionary, Locale, ProjectId, ServiceId, TeamMemberId } from '@/lib/i18n/dictionaries';
 import { CinematicAurora } from './cinematic-aurora';
@@ -46,16 +46,45 @@ const projectMedia: Record<ProjectId, { image?: string; logo?: string; href?: st
   tiendix: { image: 'https://images.unsplash.com/photo-1688561807971-728cd39eb71c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80', href: '#' },
 };
 
-const teamPortraits: Record<TeamMemberId, string> = {
-  jorge: '/cosmic/src/assets/27e0a25c06adf49df37f10e1cf6a32b3add48a30.png',
-  paola: '/cosmic/src/assets/715265d82cfd80d0c3c46d55c9970e2205d611d8.png',
-  samira: '/cosmic/src/assets/736e0560640ee75ce81d747a3cffb1019b8f6d6e.png',
+const teamPortraits: Record<TeamMemberId, { base: string; hover?: string }> = {
+  jorge: {
+    base: '/cosmic/src/assets/27e0a25c06adf49df37f10e1cf6a32b3add48a30.png',
+    hover: '/avatars/Jorge2.png',
+  },
+  paola: {
+    base: '/cosmic/src/assets/715265d82cfd80d0c3c46d55c9970e2205d611d8.png',
+    hover: '/avatars/paola.jpg',
+  },
+  samira: {
+    base: '/cosmic/src/assets/736e0560640ee75ce81d747a3cffb1019b8f6d6e.png',
+    hover: '/avatars/samira.jpg',
+  },
 };
 
 export function CosmicPage({ locale }: { locale: Locale }) {
   const dictionary = useDictionary();
   const { hero, manifesto, services, projects, team, contact, navigation } = dictionary;
   const [formData, setFormData] = useState({ name: '', message: contact.defaultMessage });
+  const heroRef = useRef<HTMLElement | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const heroInView = useInView(heroRef, { amount: 0.45, margin: '-15% 0px -25% 0px' });
+  const animateHeroBackdrop = false; // keep hero static to avoid GPU spikes
+  const twinkleStars = useMemo(
+    () => [
+      { x: '8%', y: '26%', size: 3, delay: 0 },
+      { x: '22%', y: '30%', size: 2, delay: 1.2 },
+      { x: '38%', y: '28%', size: 2.5, delay: 0.6 },
+      { x: '55%', y: '36%', size: 3.2, delay: 1.8 },
+      { x: '68%', y: '38%', size: 2.4, delay: 0.3 },
+      { x: '82%', y: '30%', size: 2.8, delay: 1.5 },
+      { x: '15%', y: '42%', size: 2.2, delay: 0.9 },
+      { x: '45%', y: '44%', size: 2.6, delay: 1.1 },
+      { x: '73%', y: '38%', size: 2.1, delay: 0.4 },
+      { x: '90%', y: '30%', size: 2.9, delay: 2.0 },
+    ],
+    []
+  );
+  const enableStarTwinkle = heroInView && !prefersReducedMotion;
 
   const navItems = useMemo(
     () => [
@@ -98,14 +127,12 @@ export function CosmicPage({ locale }: { locale: Locale }) {
     >
       <div className="fixed inset-0 pointer-events-none" aria-hidden>
         <div className="absolute inset-0 bg-gradient-to-b from-[#000000] via-[#0a0d1f] to-[#0d0a1a]" />
-        <motion.div
-          className="absolute inset-0 blur-[120px] opacity-[0.06]"
+        <div
+          className="absolute inset-0 blur-[80px] opacity-[0.05]"
           style={{
             background:
               'radial-gradient(ellipse 1200px 800px at 40% 30%, #4FD4E4 0%, transparent 50%), radial-gradient(ellipse 1000px 700px at 60% 70%, #7B5CFB 0%, transparent 50%)',
           }}
-          animate={{ x: [0, 8, -8, 0], y: [0, -5, 5, 0] }}
-          transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
         />
         <div
           className="absolute inset-0 opacity-[0.02]"
@@ -120,8 +147,8 @@ export function CosmicPage({ locale }: { locale: Locale }) {
       <CosmicHeader navItems={navItems} locale={locale} />
 
       <main className="relative z-10">
-        <section id="hero" className="relative overflow-hidden px-6 pt-32 pb-28 lg:pb-36">
-          <CinematicAurora variant="hero" animated />
+        <section id="hero" ref={heroRef} className="relative overflow-hidden px-6 pt-32 pb-28 lg:pb-36">
+          <CinematicAurora variant="hero" animated={false} />
 
           <div className="absolute inset-0" aria-hidden>
             <div className="absolute inset-0 opacity-[0.015]" style={{ background: 'radial-gradient(circle at 30% 20%, rgba(79,212,228,0.2), transparent 45%)' }} />
@@ -135,6 +162,32 @@ export function CosmicPage({ locale }: { locale: Locale }) {
                 mixBlendMode: 'overlay',
               }}
             />
+            <div className="absolute inset-x-0 top-0 h-[62%] pointer-events-none">
+              {twinkleStars.map((star, idx) => (
+                <motion.div
+                  key={idx}
+                  className="absolute rounded-full bg-white"
+                  style={{
+                    width: star.size,
+                    height: star.size,
+                    left: star.x,
+                    top: star.y,
+                    boxShadow: '0 0 10px rgba(255,255,255,0.35)',
+                    opacity: 0.35,
+                  }}
+                  animate={
+                    enableStarTwinkle
+                      ? { opacity: [0.15, 0.9, 0.15], scale: [1, 1.7, 1] }
+                      : { opacity: 0.35, scale: 1 }
+                  }
+                  transition={
+                    enableStarTwinkle
+                      ? { duration: 2.5 + star.delay, repeat: Infinity, ease: 'easeInOut', delay: star.delay }
+                      : { duration: 0 }
+                  }
+                />
+              ))}
+            </div>
           </div>
 
           <div className="relative mx-auto flex max-w-[1180px] flex-col gap-10 text-center">
@@ -300,50 +353,66 @@ export function CosmicPage({ locale }: { locale: Locale }) {
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {teamEntries.map(([id, copy], idx) => (
-                <motion.div
-                  key={id}
-                  className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 p-1 shadow-[0_16px_40px_rgba(0,0,0,0.28)]"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: idx * 0.08 }}
-                >
-                  <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-white/5 to-white/0">
-                    <div className="relative h-64 w-full overflow-hidden">
-                      <Image
-                        src={teamPortraits[id]}
-                        alt={copy.role}
-                        fill
-                        sizes="(min-width: 1024px) 320px, (min-width: 768px) 50vw, 100vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
-                        priority={idx === 0}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
+              {teamEntries.map(([id, copy], idx) => {
+                const portrait = teamPortraits[id];
+
+                return (
+                  <motion.div
+                    key={id}
+                    className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 p-1 shadow-[0_16px_40px_rgba(0,0,0,0.28)]"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: idx * 0.08 }}
+                  >
+                    <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-white/5 to-white/0">
+                      <div className="relative h-64 w-full overflow-hidden">
+                        <Image
+                          src={portrait.base}
+                          alt={copy.role}
+                          fill
+                          sizes="(min-width: 1024px) 320px, (min-width: 768px) 50vw, 100vw"
+                          className={`object-cover transition-all duration-500 group-hover:scale-[1.05] ${
+                            portrait.hover ? 'opacity-100 group-hover:opacity-0' : ''
+                          }`}
+                          priority={idx === 0}
+                        />
+                        {portrait.hover ? (
+                          <Image
+                            src={portrait.hover}
+                            alt={copy.role}
+                            fill
+                            sizes="(min-width: 1024px) 320px, (min-width: 768px) 50vw, 100vw"
+                            className="object-cover opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-[1.05]"
+                            loading="eager"
+                          />
+                        ) : null}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
+                      </div>
+                      <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" aria-hidden>
+                        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10" />
+                      </div>
+                      <div className="absolute top-4 left-4 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[12px] tracking-[0.2em] text-white/80">
+                        TEAM
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 space-y-1 px-6 pb-5">
+                        <h3 className="text-xl text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.4)] font-space-grotesk">{copy.role}</h3>
+                        <p className="text-sm text-white/80 font-geist-mono">{copy.description}</p>
+                      </div>
+                      <div className="absolute bottom-4 right-4 flex items-center gap-2">
+                        <a
+                          href="https://www.linkedin.com/company/cosmic-st/"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0077b5] text-white shadow-[0_2px_12px_rgba(0,119,181,0.6)]"
+                        >
+                          <Linkedin className="h-4 w-4" />
+                        </a>
+                      </div>
                     </div>
-                    <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" aria-hidden>
-                      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10" />
-                    </div>
-                    <div className="absolute top-4 left-4 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[12px] tracking-[0.2em] text-white/80">
-                      TEAM
-                    </div>
-                    <div className="absolute bottom-0 left-0 right-0 space-y-1 px-6 pb-5">
-                      <h3 className="text-xl text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.4)] font-space-grotesk">{copy.role}</h3>
-                      <p className="text-sm text-white/80 font-geist-mono">{copy.description}</p>
-                    </div>
-                    <div className="absolute bottom-4 right-4 flex items-center gap-2">
-                      <a
-                        href="https://www.linkedin.com/company/cosmic-st/"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0077b5] text-white shadow-[0_2px_12px_rgba(0,119,181,0.6)]"
-                      >
-                        <Linkedin className="h-4 w-4" />
-                      </a>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </div>
 
             <div className="flex items-center justify-center gap-3 text-sm">

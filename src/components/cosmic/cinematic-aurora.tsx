@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { useRef } from 'react';
 
 interface CinematicAuroraProps {
   variant?: 'hero' | 'section' | 'contact';
@@ -9,6 +10,11 @@ interface CinematicAuroraProps {
 }
 
 export function CinematicAurora({ variant = 'section', animated = false, className = '' }: CinematicAuroraProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const isInView = useInView(containerRef, { amount: 0.25, margin: '-20% 0px -10% 0px' });
+  const shouldAnimate = animated && !prefersReducedMotion && isInView;
+
   const auroraGradient = `
     radial-gradient(
       ellipse 200% 150% at 50% 50%,
@@ -48,22 +54,8 @@ export function CinematicAurora({ variant = 'section', animated = false, classNa
 
   const config = configs[variant];
 
-  if (!animated) {
-    return (
-      <div className={`absolute inset-0 -z-10 pointer-events-none overflow-hidden ${className}`}>
-        <div
-          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${config.size} ${config.blur} ${config.opacity}`}
-          style={{
-            background: auroraGradient,
-            borderRadius: '50%',
-          }}
-        />
-      </div>
-    );
-  }
-
   return (
-    <div className={`absolute inset-0 -z-10 pointer-events-none overflow-hidden ${className}`}>
+    <div ref={containerRef} className={`absolute inset-0 -z-10 pointer-events-none overflow-hidden ${className}`}>
       <div
         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${config.size} ${config.blur} opacity-[0.04]`}
         style={{
@@ -72,23 +64,33 @@ export function CinematicAurora({ variant = 'section', animated = false, classNa
         }}
       />
 
-      <motion.div
-        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${config.size} ${config.blur} ${config.opacity}`}
-        style={{
-          background: auroraGradient,
-          borderRadius: '50%',
-        }}
-        animate={{
-          x: [0, config.movement, -config.movement, 0],
-          y: [0, -config.movement * 0.6, config.movement * 0.6, 0],
-        }}
-        transition={{
-          duration: config.duration,
-          repeat: Infinity,
-          ease: 'linear',
-          repeatType: 'loop',
-        }}
-      />
+      {shouldAnimate ? (
+        <motion.div
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${config.size} ${config.blur} ${config.opacity}`}
+          style={{
+            background: auroraGradient,
+            borderRadius: '50%',
+          }}
+          animate={{
+            x: [0, config.movement, -config.movement, 0],
+            y: [0, -config.movement * 0.6, config.movement * 0.6, 0],
+          }}
+          transition={{
+            duration: config.duration,
+            repeat: Infinity,
+            ease: 'linear',
+            repeatType: 'loop',
+          }}
+        />
+      ) : (
+        <div
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${config.size} ${config.blur} ${config.opacity}`}
+          style={{
+            background: auroraGradient,
+            borderRadius: '50%',
+          }}
+        />
+      )}
     </div>
   );
 }

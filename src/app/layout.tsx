@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -36,6 +37,14 @@ const spaceGrotesk = localFont({
   variable: "--font-space-grotesk",
   display: "swap",
 });
+
+export const metadata: Metadata = {
+  icons: {
+    icon: "/Favicon.png",
+    shortcut: "/Favicon.png",
+    apple: "/Favicon.png",
+  },
+};
 
 export default function RootLayout({
   children,

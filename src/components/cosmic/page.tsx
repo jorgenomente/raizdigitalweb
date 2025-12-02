@@ -81,6 +81,14 @@ export function CosmicPage({ locale }: { locale: Locale }) {
   );
   const enableStarTwinkle = heroInView && !prefersReducedMotion;
 
+  const handleContact = () => {
+    const encodedMessage = encodeURIComponent(
+      `${formData.message}${formData.name ? `\nNombre o negocio: ${formData.name}` : ''}`
+    );
+    const whatsappUrl = `https://wa.me/541171139469?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   const navItems = useMemo(
     () => [
       { label: navigation.hero, href: '#hero' },
@@ -436,7 +444,13 @@ export function CosmicPage({ locale }: { locale: Locale }) {
             <div className="mx-auto mt-12 max-w-[960px]">
               <div className="relative overflow-hidden rounded-[32px] border border-cyan-400/10 bg-gradient-to-br from-cyan-500/[0.04] via-purple-500/[0.03] to-pink-500/[0.02] p-1 shadow-[0_25px_80px_-15px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.04)]">
                 <div className="rounded-[28px] bg-[#0F171E]/70 p-10 backdrop-blur-xl">
-                  <form className="space-y-8">
+                  <form
+                    className="space-y-8"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      handleContact();
+                    }}
+                  >
                     <div className="space-y-2">
                       <label className="block text-[11px] tracking-[1.2px] text-[#9BA8B5] uppercase">{contact.nameLabel}</label>
                       <div className="relative">

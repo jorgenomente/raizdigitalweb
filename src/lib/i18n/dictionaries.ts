@@ -158,7 +158,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       title: "Mini Sistema Operativo",
       description:
         "Dashboard operativo que ordena tu día a día. Centralizamos tareas, inventario, vencimientos y pagos para que dejes atrás las planillas y el caos a la hora de hacer pedidos a tus proveedores.",
-      estimatedTime: "Entrega estimada: 7–10 días.",
+      estimatedTime: "Entrega estimada: 15-20 días.",
       startingPrice: "Inversión desde USD 380.",
       benefit:
         "Tiendas saludables y dietéticas, negocios de servicios y equipos que hoy dependen de cuadernos, planillas o chats para seguir pedidos, tareas y vencimientos.",
@@ -167,7 +167,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       title: "Rediseño UX/UI + Prototipo",
       description:
         "Transformamos sistemas confusos en herramientas claras. Revisamos tu sistema actual, lo organizamos y entregamos un prototipo navegable con diseño profesional listo para validar con tu equipo.",
-      estimatedTime: "Entrega estimada: 10–15 días.",
+      estimatedTime: "Entrega estimada: 20–25 días.",
       startingPrice: "Inversión desde USD 700.",
       benefit:
         "Equipos que ya tienen un sistema o app interna pero la interfaz es poco intuitiva, lenta o genera errores en el uso diario.",
@@ -320,7 +320,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       title: "Mini Operating System",
       description:
         "Operational dashboard that organizes your day to day. We centralize tasks, inventory, expirations, and payments so you can leave spreadsheets and chaos behind when ordering from suppliers.",
-      estimatedTime: "Estimated delivery: 7–10 days.",
+      estimatedTime: "Estimated delivery: 15-20 days.",
       startingPrice: "Investment from USD 380.",
       benefit:
         "Health food shops, service businesses, and teams that rely on notebooks, spreadsheets, or chats to track orders, tasks, and expirations.",
@@ -329,7 +329,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       title: "UX/UI Redesign + Prototype",
       description:
         "We turn confusing systems into clear tools. We review your current system, organize it, and deliver a navigable prototype with professional design ready to validate with your team.",
-      estimatedTime: "Estimated delivery: 10–15 days.",
+      estimatedTime: "Estimated delivery: 20–25 days.",
       startingPrice: "Investment from USD 700.",
       benefit:
         "Teams that already have a system or internal app but the interface is unintuitive, slow, or causes errors in daily use.",

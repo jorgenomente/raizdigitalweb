@@ -16,7 +16,7 @@ export function ContactSection() {
     const encodedMessage = encodeURIComponent(
       `${message}${clientName ? `\nNombre o negocio: ${clientName}` : ""}`
     );
-    const whatsappUrl = `https://wa.me/5491171139469?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/541171139469?text=${encodedMessage}`;
     window.open(whatsappUrl, "_blank");
   };
 

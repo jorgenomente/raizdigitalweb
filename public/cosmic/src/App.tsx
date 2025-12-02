@@ -293,7 +293,7 @@ export default function App() {
             <div className="relative mt-12 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-[900px] mx-auto">
               {[
                 { text: 'Toman pedidos por WhatsApp o cuadernos', gradient: 'linear-gradient(135deg, rgba(79, 212, 228, 0.85) 0%, rgba(6, 182, 212, 0.85) 100%)', glow: 'rgba(79, 212, 228, 0.25)' },
-                { text: 'Crecen sin estructura', gradient: 'linear-gradient(135deg, rgba(196, 91, 255, 0.85) 0%, rgba(168, 85, 247, 0.85) 100%)', glow: 'rgba(196, 91, 255, 0.25)' },
+                { text: 'Demasiada carga laboral', gradient: 'linear-gradient(135deg, rgba(196, 91, 255, 0.85) 0%, rgba(168, 85, 247, 0.85) 100%)', glow: 'rgba(196, 91, 255, 0.25)' },
                 { text: 'No controlan stock ni vencimientos', gradient: 'linear-gradient(135deg, rgba(139, 92, 246, 0.85) 0%, rgba(196, 91, 255, 0.85) 100%)', glow: 'rgba(168, 85, 247, 0.25)' },
                 { text: 'Pierden tiempo con tareas manuales', gradient: 'linear-gradient(135deg, rgba(6, 182, 212, 0.85) 0%, rgba(79, 212, 228, 0.85) 100%)', glow: 'rgba(79, 212, 228, 0.25)' },
                 { text: 'No cuentan con información confiable para decidir', gradient: 'linear-gradient(135deg, rgba(196, 91, 255, 0.85) 0%, rgba(219, 39, 119, 0.85) 100%)', glow: 'rgba(196, 91, 255, 0.25)' },

@@ -244,7 +244,7 @@ function Text13() {
 function Text14() {
   return (
     <div className="absolute h-[24px] left-[18px] top-0 w-[145.953px]" data-name="Text">
-      <p className="absolute font-['Inter:Light',sans-serif] font-light leading-[24px] left-0 not-italic text-[15px] text-[rgba(203,213,225,0.95)] text-nowrap top-0 tracking-[-0.2344px] whitespace-pre">Crecen sin estructura</p>
+      <p className="absolute font-['Inter:Light',sans-serif] font-light leading-[24px] left-0 not-italic text-[15px] text-[rgba(203,213,225,0.95)] text-nowrap top-0 tracking-[-0.2344px] whitespace-pre">Demasiada carga laboral</p>
     </div>
   );
 }

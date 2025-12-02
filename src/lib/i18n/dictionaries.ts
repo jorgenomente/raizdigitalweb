@@ -123,7 +123,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       idealForHeading: "Ideal para negocios que:",
       idealForList: [
         "Toman pedidos por WhatsApp o cuadernos",
-        "Crecen sin estructura",
+        "Demasiada carga laboral",
         "No controlan stock o vencimientos",
         "Pierden tiempo con tareas manuales",
         "Necesitan información confiable para tomar decisiones",
@@ -280,7 +280,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       idealForHeading: "Perfect for teams that:",
       idealForList: [
         "Take orders through WhatsApp or notebooks",
-        "Scale without a clear structure",
+        "Too much workload",
         "Lack inventory or expiration control",
         "Lose hours with manual tasks",
         "Need reliable information to make decisions",

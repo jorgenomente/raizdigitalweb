@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
-import { ArrowRight, Palette, Workflow, Compass, Layers3, Layout } from "lucide-react";
+import { ArrowRight, Palette, Workflow, Layers3, Layout } from "lucide-react";
 import { useDictionary } from "@/components/providers/translation-provider";
 import type { ServiceId } from "@/lib/i18n/dictionaries";
 import { useMotionPreferences } from "@/lib/motion-preferences";
@@ -23,9 +23,9 @@ const serviceNodes: ServiceNode[] = [
     position: "top",
   },
   {
-    id: "strategy",
-    icon: Layers3,
-    color: "#7C8CFF",
+    id: "systems",
+    icon: Workflow,
+    color: "#D55FA3",
     position: "bottom",
   },
   {
@@ -35,16 +35,10 @@ const serviceNodes: ServiceNode[] = [
     position: "top",
   },
   {
-    id: "systems",
-    icon: Workflow,
-    color: "#D55FA3",
+    id: "strategy",
+    icon: Layers3,
+    color: "#7C8CFF",
     position: "bottom",
-  },
-  {
-    id: "advisory",
-    icon: Compass,
-    color: "#4FD4E4",
-    position: "top",
   },
 ];
 
@@ -168,7 +162,7 @@ export function ServicesGrid() {
       <div className="absolute inset-0 bg-[#111418]" />
 
       {!shouldReduceMotion && (
-        <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.04]">
+        <div className="pointer-events-none.absolute inset-0 overflow-hidden.opacity-[0.04]">
           <motion.div
             className="absolute inset-0 h-[120%] w-[120%]"
             style={{
@@ -257,7 +251,7 @@ export function ServicesGrid() {
           <h2 className="font-space-grotesk mb-6 text-4xl text-white tracking-tight md:text-5xl">
             {servicesCopy.heading}
           </h2>
-          <p className="mx-auto mb-8 max-w-2xl text-xl text-[#AAB7C4]">
+          <p className="mx-auto.mb-8 max-w-2xl text-xl text-[#AAB7C4]">
             {servicesCopy.description}
           </p>
 
@@ -323,7 +317,7 @@ export function ServicesGrid() {
         </motion.div>
 
         <div className="relative flex flex-1 items-center">
-
+          {/* SVG líneas + partículas */}
           <div className="pointer-events-none absolute inset-0 z-10">
             <div className="relative flex h-full w-full items-center">
               <svg
@@ -446,6 +440,7 @@ export function ServicesGrid() {
               </svg>
             </div>
           </div>
+
           <style>{`
             ${allowMotion
               ? serviceNodes
@@ -461,6 +456,7 @@ export function ServicesGrid() {
               : ""}
           `}</style>
 
+          {/* Cards */}
           <div
             ref={scrollContainerRef}
             className="relative z-20 flex-1 overflow-x-auto py-12"
@@ -486,7 +482,7 @@ export function ServicesGrid() {
                   <motion.div
                     key={service.id}
                     tabIndex={0}
-                    className={`group relative flex h-full w-[360px] flex-shrink-0 snap-center flex-col rounded-[32px] border border-white/10 bg-[#0E1C26]/80 p-8 transition-all duration-500 ease-out will-change-transform focus:outline-none ${
+                    className={`group relative flex h-full w-[360px] flex-shrink-0 snap-center flex-col rounded-[32px] border border.white/10 bg-[#0E1C26]/80 p-8 transition-all duration-500 ease-out will-change-transform focus:outline-none ${
                       shouldReduceMotion ? "" : "backdrop-blur-xl"
                     }`}
                     style={{
@@ -521,81 +517,97 @@ export function ServicesGrid() {
                     }
                     whileTap={{ scale: 0.98 }}
                   >
-                  <div
-                    className="pointer-events-none absolute inset-0 rounded-[32px] opacity-20 transition duration-500 group-hover:opacity-80"
-                    style={{
-                      background: `radial-gradient(circle at top, ${service.color}22, transparent 65%)`,
-                      filter: "blur(0px)",
-                    }}
-                  />
-
-                  <div className="relative flex flex-1 flex-col">
-                    <service.icon
-                      className="h-10 w-10"
-                      style={{ color: service.color }}
-                    />
-                    <h3 className="font-space-grotesk mt-5 text-2xl text-white">
-                      {serviceContent.title}
-                    </h3>
-                    <p className="mt-4 whitespace-pre-line text-base leading-relaxed text-[#AAB7C4]">
-                      {serviceContent.description}
-                    </p>
-
-                    <motion.div
-                      className="mt-10 rounded-2xl border border-white/10 bg-[#101d27]/60 p-5"
-                      animate={
-                        isActive
-                          ? {
-                              y: -8,
-                              opacity: 1,
-                              boxShadow: `0 22px 48px ${service.color}22`,
-                            }
-                          : {
-                              y: 0,
-                              opacity: 0.9,
-                              boxShadow: "0 0 0 rgba(0,0,0,0)",
-                            }
-                      }
+                    <div
+                      className="pointer-events-none absolute inset-0 rounded-[32px] opacity-20 transition duration-500 group-hover:opacity-80"
                       style={{
-                        background:
-                          isActive
-                            ? `linear-gradient(145deg, ${service.color}1F, rgba(10, 28, 38, 0.9))`
-                            : "linear-gradient(145deg, rgba(10, 24, 32, 0.9), rgba(10, 24, 32, 0.65))",
-                        borderColor:
-                          isActive
-                            ? `${service.color}55`
-                            : "rgba(255,255,255,0.08)",
+                        background: `radial-gradient(circle at top, ${service.color}22, transparent 65%)`,
+                        filter: "blur(0px)",
                       }}
-                      transition={{ duration: 0.45, ease: "easeOut" }}
-                    >
-                      <div
-                        className="font-geist-mono flex items-center gap-3 text-xs uppercase tracking-[0.32em]"
-                        style={{
-                          color: service.color,
-                        }}
-                      >
-                        <span>{servicesCopy.keyBenefitLabel}</span>
-                        <motion.span
-                          animate={
-                            isActive && allowMotion
-                              ? { x: [0, 8, 0] }
-                              : undefined
-                          }
-                          transition={
-                            allowMotion
-                              ? { duration: 2.2, repeat: Infinity, ease: "easeInOut" }
-                              : undefined
-                          }
-                        >
-                          <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
-                        </motion.span>
-                      </div>
-                      <p className="mt-4 text-base leading-relaxed text-[#F1F5F9]">
-                        {serviceContent.benefit}
+                    />
+
+                    <div className="relative flex flex-1 flex-col">
+                      <service.icon
+                        className="h-10 w-10"
+                        style={{ color: service.color }}
+                      />
+                      <h3 className="font-space-grotesk mt-5 text-xl md:text-2xl font-semibold text-slate-50">
+                        {serviceContent.title}
+                      </h3>
+
+                      {/* Descripción principal */}
+                      <p className="mt-3 text-sm md:text-base leading-relaxed text-slate-200/90">
+                        {serviceContent.description}
                       </p>
-                    </motion.div>
-                  </div>
-                </motion.div>
+
+                      {/* Entrega estimada */}
+                      {serviceContent.estimatedTime && (
+                        <p className="mt-3 text-sm text-neutral-300">
+                          {serviceContent.estimatedTime}
+                        </p>
+                      )}
+
+                      {/* Inversión desde */}
+                      {serviceContent.startingPrice && (
+                        <p className="text-sm text-neutral-300">
+                          {serviceContent.startingPrice}
+                        </p>
+                      )}
+
+                      <motion.div
+                        className="mt-10 rounded-2xl border border-white/10 bg-[#101d27]/60 p-5"
+                        animate={
+                          isActive
+                            ? {
+                                y: -8,
+                                opacity: 1,
+                                boxShadow: `0 22px 48px ${service.color}22`,
+                              }
+                            : {
+                                y: 0,
+                                opacity: 0.9,
+                                boxShadow: "0 0 0 rgba(0,0,0,0)",
+                              }
+                        }
+                        style={{
+                          background:
+                            isActive
+                              ? `linear-gradient(145deg, ${service.color}1F, rgba(10, 28, 38, 0.9))`
+                              : "linear-gradient(145deg, rgba(10, 24, 32, 0.9), rgba(10, 24, 32, 0.65))",
+                          borderColor:
+                            isActive
+                              ? `${service.color}55`
+                              : "rgba(255,255,255,0.08)",
+                        }}
+                        transition={{ duration: 0.45, ease: "easeOut" }}
+                      >
+                        <div
+                          className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium tracking-[0.16em] uppercase text-slate-100/80"
+                          style={{
+                            color: service.color,
+                          }}
+                        >
+                          <span>{servicesCopy.keyBenefitLabel}</span>
+                          <motion.span
+                            animate={
+                              isActive && allowMotion
+                                ? { x: [0, 8, 0] }
+                                : undefined
+                            }
+                            transition={
+                              allowMotion
+                                ? { duration: 2.2, repeat: Infinity, ease: "easeInOut" }
+                                : undefined
+                            }
+                          >
+                            <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
+                          </motion.span>
+                        </div>
+                        <p className="mt-2 text-sm text-slate-200 font-semibold">
+                          <strong>{serviceContent.benefit}</strong>
+                        </p>
+                      </motion.div>
+                    </div>
+                  </motion.div>
                 );
               })}
               <div

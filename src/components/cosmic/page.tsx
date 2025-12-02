@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
-import { ArrowRight, BarChart3, Globe, Grid, HelpCircle, MessageCircle, User, Linkedin } from 'lucide-react';
+import { ArrowRight, BarChart3, Globe, Grid, MessageCircle, User, Linkedin } from 'lucide-react';
 import type { Dictionary, Locale, ProjectId, ServiceId, TeamMemberId } from '@/lib/i18n/dictionaries';
 import { CinematicAurora } from './cinematic-aurora';
 import { ServiceCard } from './service-card';
@@ -11,7 +11,7 @@ import { CosmicProjectCard } from './project-card';
 import { CosmicHeader } from './header-navigation';
 import { useDictionary } from '../providers/translation-provider';
 
-const serviceVisuals: Record<ServiceId, { color: 'amber' | 'blue' | 'cyan' | 'pink' | 'teal'; glow: string; icon: ReactNode }> = {
+const serviceVisuals: Record<ServiceId, { color: 'amber' | 'blue' | 'cyan' | 'pink'; glow: string; icon: ReactNode }> = {
   landing: {
     color: 'amber',
     glow: 'rgba(245,158,11,0.05)',
@@ -31,11 +31,6 @@ const serviceVisuals: Record<ServiceId, { color: 'amber' | 'blue' | 'cyan' | 'pi
     color: 'pink',
     glow: 'rgba(236,72,153,0.05)',
     icon: <Grid className="w-8 h-8" />,
-  },
-  advisory: {
-    color: 'teal',
-    glow: 'rgba(20,184,166,0.05)',
-    icon: <HelpCircle className="w-8 h-8" />,
   },
 };
 
@@ -310,6 +305,8 @@ export function CosmicPage({ locale }: { locale: Locale }) {
                   description={copy.description}
                   tag={services.keyBenefitLabel}
                   ideal={copy.benefit}
+                  estimatedTime={copy.estimatedTime}
+                  startingPrice={copy.startingPrice}
                   color={serviceVisuals[id].color}
                   glowColor={serviceVisuals[id].glow}
                   index={idx}

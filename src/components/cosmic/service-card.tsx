@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { Clock3, Wallet } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 
 type ServiceColor = 'amber' | 'blue' | 'cyan' | 'pink' | 'teal';
@@ -11,6 +12,8 @@ interface ServiceCardProps {
   description: string;
   tag: string;
   ideal: string;
+  estimatedTime?: string;
+  startingPrice?: string;
   color: ServiceColor;
   glowColor: string;
   index: number;
@@ -49,7 +52,7 @@ const colorClasses: Record<ServiceColor, { text: string; bg: string; border: str
   },
 };
 
-export function ServiceCard({ icon, title, description, tag, ideal, color, glowColor, index }: ServiceCardProps) {
+export function ServiceCard({ icon, title, description, tag, ideal, estimatedTime, startingPrice, color, glowColor, index }: ServiceCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const classes = colorClasses[color];
 
@@ -102,7 +105,24 @@ export function ServiceCard({ icon, title, description, tag, ideal, color, glowC
         </motion.div>
 
         <h3 className="text-white text-xl mb-4 leading-tight font-space-grotesk">{title}</h3>
-        <p className="text-[#B5C1CE] text-[13px] leading-relaxed mb-6 tracking-tight flex-grow font-geist-mono">{description}</p>
+        <p className="text-[#B5C1CE] text-[13px] leading-relaxed mb-4 tracking-tight flex-1 font-geist-mono">{description}</p>
+
+        {(estimatedTime || startingPrice) && (
+          <div className="mb-5 flex flex-col gap-1 text-xs text-[#A6B4C2] font-geist-mono">
+            {estimatedTime && (
+              <div className="flex items-center gap-2">
+                <Clock3 className="h-4 w-4 opacity-70" />
+                <span>{estimatedTime}</span>
+              </div>
+            )}
+            {startingPrice && (
+              <div className="flex items-center gap-2">
+                <Wallet className="h-4 w-4 opacity-70" />
+                <span>{startingPrice}</span>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className={`inline-flex items-center px-3 py-2 rounded-lg mb-3 ${classes.bg} border ${classes.border}`}>
           <span className={`text-[10px] tracking-[0.9px] uppercase ${classes.text}`}>{tag}</span>

@@ -20,7 +20,7 @@ export default function App() {
     {
       icon: <Globe className="w-8 h-8" />,
       title: 'Diseño de landing pages y sitios web',
-      description: 'Páginas claras, modernas y pensadas para convertir. Diseñamos sitios que conectan con tu audiencia y transmiten tu mensaje de forma clara y persuasiva posicionándote desde el primer clic.',
+      description: 'y pensadas para convertir. Diseñamos sitios que conectan con tu audiencia y transmiten tu mensaje de forma clara y persuasiva posicionándote desde el primer clic.',
       tag: 'IDEAL PARA →',
       ideal: 'Emprendedores y marcas que necesitan una web que atraiga, eduque y estimule en conversiones.',
       color: 'amber' as const,
@@ -220,7 +220,7 @@ export default function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.26, delay: 0.34 }}
           >
-            Diseñamos sitios web, identidades y sistemas funcionales para generar experiencias y resultados reales.
+            Trabajamos junto a tiendas, negocios de servicios y equipos que quieren dejar atrás las planillas, las tareas manuales y el caos operativo que se acumula en WhatsApp.
           </motion.p>
 
           {/* Botón VisionOS Premium con Animaciones */}

@@ -198,7 +198,7 @@ export default function App() {
           </div>
 
           <p className="text-[#B5C1CE] max-w-[620px] mx-auto mb-12 leading-relaxed font-[Space_Grotesk] text-[16px]" style={{ WebkitFontSmoothing: 'antialiased' }}>
-            Diseñamos sitios web, identidades y sistemas funcionales para generar experiencias y resultados reales.
+            Trabajamos junto a tiendas, negocios de servicios y equipos que quieren dejar atrás las planillas, las tareas manuales y el caos operativo que se acumula en WhatsApp.
           </p>
 
           {/* Botón VisionOS Premium con Glow Aumentado */}

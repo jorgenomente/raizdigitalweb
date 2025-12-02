@@ -9,7 +9,7 @@ export type SectionId =
   | "projects"
   | "team"
   | "contact";
-export type ServiceId = "landing" | "strategy" | "webDesign" | "systems" | "advisory";
+export type ServiceId = "landing" | "strategy" | "webDesign" | "systems";
 export type ProjectId = "gestock" | "pew" | "miproveedor" | "tiendix";
 export type TeamMemberId = "jorge" | "paola" | "samira";
 
@@ -42,23 +42,31 @@ export type Dictionary = {
     description: string;
     scrollHint: string;
     keyBenefitLabel: string;
-    items: Record<ServiceId, {
-      title: string;
-      description: string;
-      benefit: string;
-    }>;
+    items: Record<
+      ServiceId,
+      {
+        title: string;
+        description: string;
+        benefit: string;
+        estimatedTime?: string;
+        startingPrice?: string;
+      }
+    >;
   };
-    projects: {
-      heading: string;
-      description: string;
-      viewCase: string;
-      progressLabel: string;
-      items: Record<ProjectId, {
+  projects: {
+    heading: string;
+    description: string;
+    viewCase: string;
+    progressLabel: string;
+    items: Record<
+      ProjectId,
+      {
         title: string;
         subtitle: string;
         tags: string[];
-      }>;
-    };
+      }
+    >;
+  };
   team: {
     heading: string;
     description: string;
@@ -92,7 +100,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Cosmic Studio crea experiencias, identidades y productos digitales que combinan estrategia, diseño y tecnología para impulsar resultados reales.",
       ogTitle: "Cosmic Studio — Experiencias digitales bilingües",
       ogDescription:
-        "Diseñamos sitios web, identidades y sistemas funcionales para generar experiencias y resultados reales.",
+        "Trabajamos junto a emprendedores, tiendas físicas, distribuidores y equipos que quieren dejar atrás las planillas, las tareas manuales y el caos operativo que se acumula en WhatsApp.",
     },
     languageSwitcher: {
       label: "Idioma",
@@ -113,7 +121,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       title: "Sistemas digitales que conectan",
       highlight: "estrategia, diseño y tecnología.",
       description:
-        "Diseñamos sitios web, identidades y sistemas funcionales para generar experiencias y resultados reales.",
+        "Trabajamos junto a emprendedores, tiendas físicas, distribuidores y equipos que quieren dejar atrás las planillas, las tareas manuales y el caos operativo que se acumula en WhatsApp.",
       cta: "Explorar servicios",
     },
     manifesto: {
@@ -131,46 +139,51 @@ const dictionaries: Record<Locale, Dictionary> = {
       ],
     },
     services: {
-      heading: "Servicios",
+  heading: "Servicios",
+  description:
+    "Unimos diseño, automatización y estrategia para que cada punto de contacto digital se sienta consistente, humano y listo para crecer.",
+  scrollHint: "Deslizá para descubrir cómo trabajamos",
+  keyBenefitLabel: "Ideal para",
+  items: {
+    landing: {
+      title: "Web de Presentación Premium",
       description:
-        "Unimos diseño, automatización y estrategia para que cada punto de contacto digital se sienta consistente, humano y listo para crecer.",
-      scrollHint: "Deslizá para descubrir cómo trabajamos",
-      keyBenefitLabel: "Ideal para",
-      items: {
-        landing: {
-          title: "Diseño de landing pages y sitios web",
-          description:
-            "Páginas claras, modernas y pensadas para convertir. Rediseñamos tu web para darle propósito, mejorar el mensaje y transmitir profesionalismo desde el primer vistazo.",
-          benefit:
-            "Emprendedores y empresas que necesitan una web más atractiva, actualizada y enfocada en resultados.",
-        },
-        strategy: {
-          title: "Diseño de software a medida",
-          description:
-            "Sistemas web que ordenan tu operación y se adaptan a cómo trabaja tu negocio. Eliminá planillas, automatizá tareas y centralizá todo en un solo lugar.\n\nIncluye: dashboards, automatizaciones, integraciones, multitenant y desarrollo end-to-end.",
-          benefit:
-            "Tiendas, distribuidores y equipos con procesos desordenados.",
-        },
-        webDesign: {
-          title: "Diseño UX/UI + Producto Digital",
-          description:
-            "Convertimos ideas en productos intuitivos y listos para usar. Diseños que reducen fricción, mejoran procesos y elevan la experiencia del usuario.\n\nIncluye: research, flujos, wireframes, UI systems, prototipos y validaciones.",
-          benefit: "Startups, nuevos productos y plataformas que necesitan escalar.",
-        },
-        systems: {
-          title: "Sistemas Operativos para Negocios",
-          description:
-            "Ordenamos tus procesos para que tu operación fluya sin caos. Combinamos estrategia, UX operativo y software para eliminar cuellos de botella. \n\nIncluye: mapeo de procesos, flujos optimizados, sistemas de control y SOPs digitales",
-          benefit: "Equipos con caos, sobrecarga o procesos informales.",
-        },
-        advisory: {
-          title: "Consultoría en Producto + Estrategia Digital",
-          description:
-            "Claridad para construir lo correcto. Te ayudamos a definir, validar y priorizar tu producto antes de invertir en desarrollo.",
-          benefit: "Founders, negocios en crecimiento, equipos sin claridad técnica.",
-        },
-      },
+        "Páginas claras, modernas y pensadas para convertir. Creamos una landing profesional que comunique mejor tu propuesta, genere confianza y esté lista para lanzar en pocos días.",
+      estimatedTime: "Entrega estimada: 5–7 días.",
+      startingPrice: "Inversión desde USD 120.",
+      benefit:
+        "Emprendedores y empresas que necesitan una web más atractiva, actualizada y enfocada en resultados, sin entrar en un proyecto complejo.",
     },
+    systems: {
+      title: "Mini Sistema Operativo",
+      description:
+        "Dashboard operativo que ordena tu día a día. Centralizamos tareas, inventario, vencimientos y pagos para que dejes atrás las planillas y el caos a la hora de hacer pedidos a tus proveedores.",
+      estimatedTime: "Entrega estimada: 7–10 días.",
+      startingPrice: "Inversión desde USD 380.",
+      benefit:
+        "Tiendas saludables y dietéticas, negocios de servicios y equipos que hoy dependen de cuadernos, planillas o chats para seguir pedidos, tareas y vencimientos.",
+    },
+    webDesign: {
+      title: "Rediseño UX/UI + Prototipo",
+      description:
+        "Transformamos sistemas confusos en herramientas claras. Revisamos tu sistema actual, lo organizamos y entregamos un prototipo navegable con diseño profesional listo para validar con tu equipo.",
+      estimatedTime: "Entrega estimada: 10–15 días.",
+      startingPrice: "Inversión desde USD 700.",
+      benefit:
+        "Equipos que ya tienen un sistema o app interna pero la interfaz es poco intuitiva, lenta o genera errores en el uso diario.",
+    },
+    strategy: {
+      title: "Sistema a medida",
+      description:
+        "Diseñamos y desarrollamos un sistema web real para tu operación: cada uno de los pasos de tu empresa conectados y automatizados. Módulos a elección (inventario, compras, pagos, pedidos, vencimientos, etc.).",
+      estimatedTime: "Entrega estimada: 30–60 días.",
+      startingPrice: "Inversión desde USD 2.000.",
+      benefit:
+        "Negocios en crecimiento, cadenas de tiendas y distribuidores que necesitan dejar atrás las planillas y tener un sistema propio que acompañe su expansión.",
+    },
+  },
+},
+
     projects: {
       heading: "Proyectos",
       description:
@@ -246,10 +259,10 @@ const dictionaries: Record<Locale, Dictionary> = {
     metadata: {
       title: " Studio — Bilingual digital experiences",
       description:
-        "Cosmic Studio builds experiences, identities, and digital products that blend strategy, design, and technology to drive real results.",
+        "We work alongside entrepreneurs, brick-and-mortar shops, distributors, and teams that want to leave behind spreadsheets, manual tasks, and the operational chaos piling up in WhatsApp.",
       ogTitle: "Cosmic Studio — Digital experiences",
       ogDescription:
-        "We design websites, identities, and functional systems to deliver genuine experiences and measurable outcomes.",
+        "We work alongside entrepreneurs, brick-and-mortar shops, distributors, and teams that want to leave behind spreadsheets, manual tasks, and the operational chaos piling up in WhatsApp.",
     },
     languageSwitcher: {
       label: "Language",
@@ -270,7 +283,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       title: "Digital systems that connect",
       highlight: "strategy, design, and technology.",
       description:
-        "We design websites, identities, and functional systems so your brand can deliver real experiences and measurable results.",
+        "We work alongside entrepreneurs, brick-and-mortar shops, distributors, and teams that want to leave behind spreadsheets, manual tasks, and the operational chaos piling up in WhatsApp.",
       cta: "Explore services",
     },
     manifesto: {
@@ -288,46 +301,51 @@ const dictionaries: Record<Locale, Dictionary> = {
       ],
     },
     services: {
-      heading: "Services",
+  heading: "Services",
+  description:
+    "We blend design, automation, and strategy so every digital touchpoint feels consistent, human, and ready to scale.",
+  scrollHint: "Slide to see how we work",
+  keyBenefitLabel: "Ideal for",
+  items: {
+    landing: {
+      title: "Premium Presentation Website",
       description:
-        "We blend design, automation, and strategy so every digital touchpoint feels consistent, human, and ready to scale.",
-      scrollHint: "Slide to see how we work",
-      keyBenefitLabel: "Ideal for",
-      items: {
-        landing: {
-          title: "Landing Pages & Websites",
-          description:
-            "Clear, modern pages built to convert. We redesign your site to add purpose, sharpen the message, and convey professionalism from the first glance.",
-          benefit:
-            "Entrepreneurs and companies that need a more attractive, up-to-date, results-focused website.",
-        },
-        strategy: {
-          title: "Custom Software Design",
-          description:
-            "Web systems that bring order to your operations and adapt to how your business works. Remove spreadsheets, automate tasks, and centralize everything in one place.\nIncludes dashboards, automations, integrations, multitenant setups, and end-to-end development.",
-          benefit:
-            "Retailers, distributors, and teams with disorganized processes.",
-        },
-        webDesign: {
-          title: "UX/UI & Digital Product Design",
-          description:
-            "We turn ideas into intuitive, ready-to-use products. Designs that reduce friction, improve processes, and elevate the user experience.\nIncludes research, flows, wireframes, UI systems, prototypes, and validation.",
-          benefit: "Startups, new products, and platforms that need to scale.",
-        },
-        systems: {
-          title: "Business Operating Systems",
-          description:
-            "We streamline your processes so your operation flows without chaos. We combine strategy, operational UX, and software to remove bottlenecks.\nIncludes process mapping, optimized flows, control systems, and digital SOPs.",
-          benefit: "Teams facing chaos, overload, or informal processes.",
-        },
-        advisory: {
-          title: "Strategic Advisory",
-          description:
-            "Beyond design: we analyze your processes and goals so every digital initiative pushes the business forward.",
-          benefit: "Make decisions with focus and confidence.",
-        },
-      },
+        "Clear, modern pages built to convert. We build a professional landing that communicates your offer, builds trust, and is ready to launch in days.",
+      estimatedTime: "Estimated delivery: 5–7 days.",
+      startingPrice: "Investment from USD 120.",
+      benefit:
+        "Entrepreneurs and companies that need a more attractive, up-to-date, results-focused site without entering a complex project.",
     },
+    systems: {
+      title: "Mini Operating System",
+      description:
+        "Operational dashboard that organizes your day to day. We centralize tasks, inventory, expirations, and payments so you can leave spreadsheets and chaos behind when ordering from suppliers.",
+      estimatedTime: "Estimated delivery: 7–10 days.",
+      startingPrice: "Investment from USD 380.",
+      benefit:
+        "Health food shops, service businesses, and teams that rely on notebooks, spreadsheets, or chats to track orders, tasks, and expirations.",
+    },
+    webDesign: {
+      title: "UX/UI Redesign + Prototype",
+      description:
+        "We turn confusing systems into clear tools. We review your current system, organize it, and deliver a navigable prototype with professional design ready to validate with your team.",
+      estimatedTime: "Estimated delivery: 10–15 days.",
+      startingPrice: "Investment from USD 700.",
+      benefit:
+        "Teams that already have a system or internal app but the interface is unintuitive, slow, or causes errors in daily use.",
+    },
+    strategy: {
+      title: "Custom System",
+      description:
+        "We design and build a real web system for your operation: every step of your business connected and automated. Pick the modules you need (inventory, purchasing, payments, orders, expirations, etc.).",
+      estimatedTime: "Estimated delivery: 30–60 days.",
+      startingPrice: "Investment from USD 2,000.",
+      benefit:
+        "Growing businesses, store chains, and distributors that need to leave spreadsheets behind and have their own system to support their expansion.",
+    },
+  },
+},
+
     projects: {
       heading: "Projects",
       description:

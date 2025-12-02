@@ -115,7 +115,7 @@ function Heading1() {
 function Paragraph() {
   return (
     <div className="absolute h-[57.594px] left-[221.39px] top-[269.59px] w-[620px]" data-name="Paragraph">
-      <p className="absolute font-['Space_Grotesk:Regular',sans-serif] font-normal leading-[28.8px] left-[310.25px] text-[#aab7c4] text-[18px] text-center top-[-0.5px] translate-x-[-50%] w-[619px]">Diseñamos sitios web, identidades y sistemas funcionales para generar experiencias y resultados reales.</p>
+      <p className="absolute font-['Space_Grotesk:Regular',sans-serif] font-normal leading-[28.8px] left-[310.25px] text-[#aab7c4] text-[18px] text-center top-[-0.5px] translate-x-[-50%] w-[619px]">Trabajamos junto a tiendas, negocios de servicios y equipos que quieren dejar atrás las planillas, las tareas manuales y el caos operativo que se acumula en WhatsApp.</p>
     </div>
   );
 }

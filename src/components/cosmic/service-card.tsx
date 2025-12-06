@@ -52,7 +52,18 @@ const colorClasses: Record<ServiceColor, { text: string; bg: string; border: str
   },
 };
 
-export function ServiceCard({ icon, title, description, tag, ideal, estimatedTime, startingPrice, color, glowColor, index }: ServiceCardProps) {
+export function ServiceCard({
+  icon,
+  title,
+  description,
+  tag,
+  ideal,
+  estimatedTime,
+  startingPrice,
+  color,
+  glowColor,
+  index,
+}: ServiceCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const classes = colorClasses[color];
 
@@ -129,6 +140,7 @@ export function ServiceCard({ icon, title, description, tag, ideal, estimatedTim
         </div>
 
         <p className="text-[#8A99A8] text-xs leading-relaxed font-geist-mono">{ideal}</p>
+
       </motion.div>
     </motion.div>
   );

@@ -63,7 +63,6 @@ export function CosmicPage({ locale }: { locale: Locale }) {
   const heroRef = useRef<HTMLElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const heroInView = useInView(heroRef, { amount: 0.45, margin: '-15% 0px -25% 0px' });
-  const animateHeroBackdrop = false; // keep hero static to avoid GPU spikes
   const twinkleStars = useMemo(
     () => [
       { x: '8%', y: '26%', size: 3, delay: 0 },
@@ -266,7 +265,7 @@ export function CosmicPage({ locale }: { locale: Locale }) {
             </h2>
 
             <p className="mx-auto max-w-3xl text-lg leading-[1.65] text-white/80 font-geist-mono">
-              Transformamos procesos manuales en sistemas digitales claros y confiables que impulsan decisiones, eficiencia y crecimiento real.
+              {manifesto.description}
             </p>
 
             <div className="relative mx-auto grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-2">

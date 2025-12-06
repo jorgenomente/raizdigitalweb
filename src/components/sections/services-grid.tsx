@@ -175,18 +175,18 @@ export function ServicesGrid() {
             animate={
               allowMotion
                 ? {
-                    x: [0, 50, 0],
-                    y: [0, 30, 0],
-                  }
+                  x: [0, 50, 0],
+                  y: [0, 30, 0],
+                }
                 : undefined
             }
             transition={
               allowMotion
                 ? {
-                    duration: 60,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }
+                  duration: 60,
+                  repeat: Infinity,
+                  ease: "linear",
+                }
                 : undefined
             }
           />
@@ -298,18 +298,18 @@ export function ServicesGrid() {
               animate={
                 allowMotion
                   ? {
-                      opacity: [0.3, 1, 0.3],
-                      scaleX: [0.8, 1, 0.8],
-                    }
+                    opacity: [0.3, 1, 0.3],
+                    scaleX: [0.8, 1, 0.8],
+                  }
                   : undefined
               }
               transition={
                 allowMotion
                   ? {
-                      duration: 2.5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }
+                    duration: 2.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }
                   : undefined
               }
             />
@@ -444,15 +444,15 @@ export function ServicesGrid() {
           <style>{`
             ${allowMotion
               ? serviceNodes
-                  .map(
-                    (_, index) => `
+                .map(
+                  (_, index) => `
               @keyframes line-pulse-${index} {
                 0%, 100% { opacity: 0.2; }
                 50% { opacity: 0.4; }
               }
             `
-                  )
-                  .join("\n")
+                )
+                .join("\n")
               : ""}
           `}</style>
 
@@ -482,9 +482,8 @@ export function ServicesGrid() {
                   <motion.div
                     key={service.id}
                     tabIndex={0}
-                    className={`group relative flex h-full w-[360px] flex-shrink-0 snap-center flex-col rounded-[32px] border border.white/10 bg-[#0E1C26]/80 p-8 transition-all duration-500 ease-out will-change-transform focus:outline-none ${
-                      shouldReduceMotion ? "" : "backdrop-blur-xl"
-                    }`}
+                    className={`group relative flex h-full w-[360px] flex-shrink-0 snap-center flex-col rounded-[32px] border border.white/10 bg-[#0E1C26]/80 p-8 transition-all duration-500 ease-out will-change-transform focus:outline-none ${shouldReduceMotion ? "" : "backdrop-blur-xl"
+                      }`}
                     style={{
                       borderColor:
                         isActive ? `${service.color}35` : "rgba(255,255,255,0.08)",
@@ -509,10 +508,10 @@ export function ServicesGrid() {
                     whileHover={
                       allowMotion
                         ? {
-                            scale: 1.045,
-                            y: -12,
-                            boxShadow: `0 36px 90px ${service.color}28`,
-                          }
+                          scale: 1.045,
+                          y: -12,
+                          boxShadow: `0 36px 90px ${service.color}28`,
+                        }
                         : { scale: 1.015 }
                     }
                     whileTap={{ scale: 0.98 }}
@@ -558,15 +557,15 @@ export function ServicesGrid() {
                         animate={
                           isActive
                             ? {
-                                y: -8,
-                                opacity: 1,
-                                boxShadow: `0 22px 48px ${service.color}22`,
-                              }
+                              y: -8,
+                              opacity: 1,
+                              boxShadow: `0 22px 48px ${service.color}22`,
+                            }
                             : {
-                                y: 0,
-                                opacity: 0.9,
-                                boxShadow: "0 0 0 rgba(0,0,0,0)",
-                              }
+                              y: 0,
+                              opacity: 0.9,
+                              boxShadow: "0 0 0 rgba(0,0,0,0)",
+                            }
                         }
                         style={{
                           background:

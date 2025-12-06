@@ -31,14 +31,20 @@ export function middleware(request: NextRequest) {
   );
 
   if (hasLocale) {
-    return NextResponse.next();
+    const locale = pathname.split("/")[1] || defaultLocale;
+    const response = NextResponse.next();
+    response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
+    return response;
   }
 
   const locale = getPreferredLocale(request);
   const localePrefix = pathname === "/" ? "" : pathname;
   const url = new URL(`/${locale}${localePrefix}`, request.url);
 
-  return NextResponse.redirect(url);
+  const response = NextResponse.redirect(url);
+  response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
+
+  return response;
 }
 
 export const config = {

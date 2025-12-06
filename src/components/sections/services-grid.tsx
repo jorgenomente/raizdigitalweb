@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
-import { ArrowRight, Palette, Workflow, Layers3, Layout } from "lucide-react";
+import { ArrowRight, Palette, Workflow, Layers3, Layout, ShoppingCart } from "lucide-react";
 import { useDictionary } from "@/components/providers/translation-provider";
 import type { ServiceId } from "@/lib/i18n/dictionaries";
 import { useMotionPreferences } from "@/lib/motion-preferences";
@@ -17,29 +17,36 @@ type ServiceNode = {
 
 const serviceNodes: ServiceNode[] = [
   {
-    id: "landing",
-    icon: Layout,
-    color: "#F5B953",
-    position: "top",
-  },
-  {
-    id: "systems",
-    icon: Workflow,
-    color: "#D55FA3",
-    position: "bottom",
-  },
-  {
-    id: "webDesign",
+    id: "branding-identidad-visual",
     icon: Palette,
-    color: "#4FD4E4",
+    color: "#14b8a6",
     position: "top",
+  },
+  {
+    id: "ecommerce-profesional",
+    icon: ShoppingCart,
+    color: "#ec4899",
+    position: "bottom",
   },
   {
     id: "strategy",
     icon: Layers3,
     color: "#7C8CFF",
+    position: "top",
+  },
+  {
+    id: "marketing-digital",
+    icon: Workflow,
+    color: "#F5B953",
     position: "bottom",
   },
+  {
+    id: "landing",
+    icon: Layout,
+    color: "#F5B953",
+    position: "bottom",
+  },
+  // webDesign card removed
 ];
 
 function BreathingParticle({

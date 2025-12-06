@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
-import { ArrowRight, BarChart3, Globe, Grid, MessageCircle, User, Linkedin } from 'lucide-react';
+import { ArrowRight, BarChart3, Globe, Grid, MessageCircle, Palette, User, Linkedin } from 'lucide-react';
 import type { Dictionary, Locale, ProjectId, ServiceId, TeamMemberId } from '@/lib/i18n/dictionaries';
 import { CinematicAurora } from './cinematic-aurora';
 import { ServiceCard } from './service-card';
@@ -11,26 +11,31 @@ import { CosmicProjectCard } from './project-card';
 import { CosmicHeader } from './header-navigation';
 import { useDictionary } from '../providers/translation-provider';
 
-const serviceVisuals: Record<ServiceId, { color: 'amber' | 'blue' | 'cyan' | 'pink'; glow: string; icon: ReactNode }> = {
+const serviceVisuals: Record<ServiceId, { color: 'amber' | 'blue' | 'cyan' | 'pink' | 'teal'; glow: string; icon: ReactNode }> = {
+  'branding-identidad-visual': {
+    color: 'teal',
+    glow: 'rgba(20, 184, 166, 0.06)',
+    icon: <Palette className="w-8 h-8" />,
+  },
   landing: {
     color: 'amber',
     glow: 'rgba(245,158,11,0.05)',
     icon: <Globe className="w-8 h-8" />,
   },
+  'ecommerce-profesional': {
+    color: 'pink',
+    glow: 'rgba(236,72,153,0.06)',
+    icon: <Grid className="w-8 h-8" />,
+  },
+  'marketing-digital': {
+    color: 'amber',
+    glow: 'rgba(245,158,11,0.06)',
+    icon: <BarChart3 className="w-8 h-8" />,
+  },
   strategy: {
     color: 'blue',
     glow: 'rgba(59,130,246,0.05)',
     icon: <BarChart3 className="w-8 h-8" />,
-  },
-  webDesign: {
-    color: 'cyan',
-    glow: 'rgba(34,211,238,0.05)',
-    icon: <Globe className="w-8 h-8" />,
-  },
-  systems: {
-    color: 'pink',
-    glow: 'rgba(236,72,153,0.05)',
-    icon: <Grid className="w-8 h-8" />,
   },
 };
 
@@ -100,27 +105,31 @@ export function CosmicPage({ locale }: { locale: Locale }) {
     [navigation]
   );
 
-  const serviceEntries = useMemo(() => Object.entries(services.items) as Array<[ServiceId, Dictionary['services']['items'][ServiceId]]>, [services.items]);
+  const serviceEntries = useMemo(() => {
+    const order: ServiceId[] = [
+      'branding-identidad-visual',
+      'landing',
+      'ecommerce-profesional',
+      'strategy',
+      'marketing-digital',
+    ];
+    const orderMap = Object.fromEntries(order.map((id, idx) => [id, idx]));
+
+    return (Object.entries(services.items) as Array<[ServiceId, Dictionary['services']['items'][ServiceId]]>).sort(
+      ([a], [b]) => (orderMap[a] ?? 99) - (orderMap[b] ?? 99)
+    );
+  }, [services.items]);
   const projectEntries = useMemo(() => Object.entries(projects.items) as Array<[ProjectId, Dictionary['projects']['items'][ProjectId]]>, [projects.items]);
   const teamEntries = useMemo(() => Object.entries(team.members) as Array<[TeamMemberId, Dictionary['team']['members'][TeamMemberId]]>, [team.members]);
-  const manifestoChips = useMemo(
-    () => {
-      const palette = [
-        { gradient: 'linear-gradient(135deg, rgba(79, 212, 228, 0.9) 0%, rgba(6, 182, 212, 0.9) 100%)', glow: 'rgba(79, 212, 228, 0.28)' },
-        { gradient: 'linear-gradient(135deg, rgba(196, 91, 255, 0.9) 0%, rgba(168, 85, 247, 0.9) 100%)', glow: 'rgba(196, 91, 255, 0.28)' },
-        { gradient: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(196, 91, 255, 0.9) 100%)', glow: 'rgba(168, 85, 247, 0.28)' },
-        { gradient: 'linear-gradient(135deg, rgba(6, 182, 212, 0.9) 0%, rgba(79, 212, 228, 0.9) 100%)', glow: 'rgba(79, 212, 228, 0.28)' },
-        { gradient: 'linear-gradient(135deg, rgba(196, 91, 255, 0.9) 0%, rgba(219, 39, 119, 0.9) 100%)', glow: 'rgba(196, 91, 255, 0.28)' },
-        { gradient: 'linear-gradient(135deg, rgba(79, 212, 228, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%)', glow: 'rgba(139, 92, 246, 0.28)' },
-      ];
+  const manifestoGroups = useMemo(() => {
+    if (manifesto.idealForGroups?.length) {
+      return manifesto.idealForGroups;
+    }
 
-      return manifesto.idealForList.map((text, idx) => ({
-        text,
-        palette: palette[idx % palette.length],
-      }));
-    },
-    [manifesto.idealForList]
-  );
+      return manifesto.idealForList.length
+      ? [{ label: manifesto.idealForHeading, items: manifesto.idealForList }]
+      : [];
+  }, [manifesto.idealForGroups, manifesto.idealForList, manifesto.idealForHeading]);
 
   return (
     <div
@@ -268,47 +277,68 @@ export function CosmicPage({ locale }: { locale: Locale }) {
               {manifesto.description}
             </p>
 
-            <div className="relative mx-auto grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-2">
-              {manifestoChips.map((chip, idx) => (
-                <motion.div
-                  key={chip.text}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                  className="rounded-full px-[18px] py-[10px] text-center shadow-[0_12px_28px_rgba(0,0,0,0.28)]"
-                  whileHover={{ scale: 1.02 }}
-                  style={{
-                    background: chip.palette.gradient,
-                    boxShadow: `0 0 20px ${chip.palette.glow}, 0 4px 12px rgba(0, 0, 0, 0.28)`,
-                    fontSize: '15px',
-                    fontWeight: 600,
-                    color: '#FFFFFF',
-                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
-                  }}
-                >
-                  <span className="font-space-grotesk">{chip.text}</span>
-                </motion.div>
-              ))}
+            <div className="relative mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {manifestoGroups.map((group, idx) => {
+                const palette = [
+                  { from: 'rgba(79, 212, 228, 0.9)', to: 'rgba(6, 182, 212, 0.9)', glow: 'rgba(79, 212, 228, 0.28)' },
+                  { from: 'rgba(196, 91, 255, 0.9)', to: 'rgba(168, 85, 247, 0.9)', glow: 'rgba(196, 91, 255, 0.28)' },
+                  { from: 'rgba(246, 189, 96, 0.9)', to: 'rgba(244, 114, 182, 0.9)', glow: 'rgba(244, 114, 182, 0.28)' },
+                ];
+                const colors = palette[idx % palette.length];
+
+                return (
+                  <motion.div
+                    key={group.label}
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.6, delay: idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                    className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-6 shadow-[0_16px_40px_rgba(0,0,0,0.28)]"
+                  >
+                    <div
+                      className="absolute inset-0 opacity-70"
+                      style={{
+                        background: `linear-gradient(135deg, ${colors.from} 0%, ${colors.to} 100%)`,
+                        filter: 'blur(40px)',
+                      }}
+                      aria-hidden
+                    />
+                    <div className="relative space-y-3">
+                      <p className="text-sm font-space-grotesk text-white drop-shadow-[0_0_14px_rgba(0,0,0,0.35)]">
+                        {group.label}
+                      </p>
+                      <ul className="space-y-2 text-[13px] leading-relaxed text-white/85">
+                        {group.items.map((item) => (
+                          <li key={item} className="flex items-start gap-2">
+                            <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-white/80 shadow-[0_0_10px_rgba(255,255,255,0.6)]" />
+                            <span className="font-geist-mono">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </section>
 
         <section id="services" className="relative overflow-hidden px-6 py-36">
           <CinematicAurora variant="section" animated={false} />
-          <div className="relative z-10 mx-auto max-w-[1180px]">
+          <div className="relative z-10 mx-auto max-w-[1500px]">
             <div className="text-center">
               <h2 className="text-5xl tracking-tight drop-shadow-[0_0_20px_rgba(255,255,255,0.08)] font-space-grotesk">{services.heading}</h2>
               <p className="mx-auto mt-4 max-w-[780px] text-[#B5C1CE] leading-relaxed font-geist-mono">{services.description}</p>
               <p className="mt-6 text-[13px] tracking-wide text-[#8A99A8] font-geist-mono">{services.scrollHint}</p>
             </div>
 
-            <div className="mt-16 grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-16 flex flex-col gap-12">
               {serviceEntries.map(([id, copy], idx) => (
                 <ServiceCard
                   key={id}
                   icon={serviceVisuals[id].icon}
                   title={copy.title}
+                  headline={copy.headline}
                   description={copy.description}
                   tag={services.keyBenefitLabel}
                   ideal={copy.benefit}
@@ -317,6 +347,13 @@ export function CosmicPage({ locale }: { locale: Locale }) {
                   color={serviceVisuals[id].color}
                   glowColor={serviceVisuals[id].glow}
                   index={idx}
+                  features={copy.features}
+                  ctaLabel={copy.ctaLabel ?? services.viewMore}
+                  reasonLabel={services.detailPage.outcomesTitle}
+                  href={`/${locale}/services/${id}`}
+                  imageSrc={copy.imageSrc ?? '/Servicios/web-cosmic.png'}
+                  imageAlt={copy.imageAlt}
+                  imageSide={copy.imageSide as "left" | "right" | undefined}
                 />
               ))}
             </div>

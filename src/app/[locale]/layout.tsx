@@ -3,8 +3,13 @@ import type { ReactNode } from "react";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { ensureLocale, type LocaleParams } from "@/lib/i18n/locale";
 
-const METADATA_BASE = new URL("https://thecosmicstudio.com");
-const OPEN_GRAPH_IMAGE = { url: "/og-cover.png", width: 1200, height: 630 };
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thecosmicstudio.com";
+const METADATA_BASE = new URL(SITE_URL);
+const OPEN_GRAPH_IMAGE = {
+  url: "/cosmic/src/assets/a7df96fb1a4777ac3a12f069252b5fa83a83c355.png",
+  width: 1200,
+  height: 630,
+};
 
 export async function generateMetadata({
   params,

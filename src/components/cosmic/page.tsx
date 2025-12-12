@@ -1,15 +1,20 @@
 'use client';
 
-import { useMemo, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
-import { ArrowRight, BarChart3, Globe, Grid, MessageCircle, Palette, User, Linkedin } from 'lucide-react';
-import type { Dictionary, Locale, ProjectId, ServiceId, TeamMemberId } from '@/lib/i18n/dictionaries';
+import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion';
+import { ArrowLeft, ArrowRight, BarChart3, Globe, Grid, Linkedin, Palette, ChevronDown } from 'lucide-react';
+import { ContactMessageCard } from '@/components/contact-message-card';
+import { getServiceSlug, type Dictionary, type Locale, type ProjectId, type ServiceId, type TeamMemberId } from '@/lib/i18n/dictionaries';
+import { AboutCosmicStudioSection } from './about-section';
 import { CinematicAurora } from './cinematic-aurora';
+import { ProcessSection } from './process-section';
 import { ServiceCard } from './service-card';
 import { CosmicProjectCard } from './project-card';
 import { CosmicHeader } from './header-navigation';
 import { useDictionary } from '../providers/translation-provider';
+import { useTheme } from '../providers/theme-provider';
+import { getGpuDebugFlags } from '@/lib/gpu-debug';
 
 const serviceVisuals: Record<ServiceId, { color: 'amber' | 'blue' | 'cyan' | 'pink' | 'teal'; glow: string; icon: ReactNode }> = {
   'branding-identidad-visual': {
@@ -39,6 +44,14 @@ const serviceVisuals: Record<ServiceId, { color: 'amber' | 'blue' | 'cyan' | 'pi
   },
 };
 
+const serviceNavLabelMap: Record<ServiceId, { es: string; en: string }> = {
+  'marketing-digital': { es: 'Marketing Digital', en: 'Digital Marketing' },
+  'branding-identidad-visual': { es: 'Branding Profesional', en: 'Professional Branding' },
+  landing: { es: 'Páginas Web', en: 'Web Pages' },
+  'ecommerce-profesional': { es: 'Tiendas Online Premium', en: 'Premium Online Stores' },
+  strategy: { es: 'Software a medida', en: 'Custom Software' },
+};
+
 const projectMedia: Record<ProjectId, { image?: string; logo?: string; href?: string }> = {
   gestock: { image: '/cosmic/src/assets/a7df96fb1a4777ac3a12f069252b5fa83a83c355.png', href: 'https://nodux1.vercel.app/demo' },
   pew: { image: '/cosmic/src/assets/3459993693e7ead60b4bf9bcdd002ae1f7ffe7dc.png', href: 'https://pew-beta.vercel.app/demo' },
@@ -61,13 +74,41 @@ const teamPortraits: Record<TeamMemberId, { base: string; hover?: string }> = {
   },
 };
 
+const buildColors = (isDark: boolean) => ({
+  page: isDark ? '#000000' : '#f5f7fb',
+  overlayTop: isDark ? '#0a0d1f' : '#f0f4ff',
+  overlayBottom: isDark ? '#0d0a1a' : '#e8efff',
+  glowOne: isDark ? '#4FD4E4' : '#0ea5e9',
+  glowTwo: isDark ? '#7B5CFB' : '#a855f7',
+  grid: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(15,23,42,0.06)',
+  text: isDark ? '#E8F0FF' : '#0b1221',
+  mutedText: isDark ? '#B5C1CE' : '#4b5563',
+  subtleText: isDark ? 'rgba(255,255,255,0.7)' : '#1f2937',
+  chipBg: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(14,165,233,0.12)',
+  chipBorder: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(15,23,42,0.12)',
+  card: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.9)',
+  cardBorder: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(15,23,42,0.12)',
+  glass: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.92)',
+  ctaFrom: isDark ? '#22D3EE' : '#0ea5e9',
+  ctaTo: isDark ? '#A855F7' : '#7c3aed',
+  panel: isDark ? 'rgba(15, 23, 31, 0.7)' : 'rgba(255, 255, 255, 0.95)',
+  panelBorder: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(15,23,42,0.08)',
+  inputBg: isDark ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.96)',
+  inputBorder: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(15,23,42,0.12)',
+  placeholder: isDark ? '#5A6775' : '#94A3B8',
+  gradientTextShadow: isDark ? '0 0 24px rgba(79,212,228,0.14)' : '0 8px 24px rgba(14,165,233,0.12)',
+});
+
 export function CosmicPage({ locale }: { locale: Locale }) {
   const dictionary = useDictionary();
-  const { hero, manifesto, services, projects, team, contact, navigation } = dictionary;
-  const [formData, setFormData] = useState({ name: '', message: contact.defaultMessage });
+  const { hero, about, process, services, projects, contact, navigation } = dictionary;
+  const gpuFlags = useMemo(() => getGpuDebugFlags(), []);
   const heroRef = useRef<HTMLElement | null>(null);
+  const projectsCarouselRef = useRef<HTMLDivElement | null>(null);
+  const contactTitleRef = useRef<HTMLHeadingElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const heroInView = useInView(heroRef, { amount: 0.45, margin: '-15% 0px -25% 0px' });
+  const contactTitleInView = useInView(contactTitleRef, { amount: 0.6, margin: '-20% 0px -20% 0px' });
   const twinkleStars = useMemo(
     () => [
       { x: '8%', y: '26%', size: 3, delay: 0 },
@@ -84,34 +125,49 @@ export function CosmicPage({ locale }: { locale: Locale }) {
     []
   );
   const enableStarTwinkle = heroInView && !prefersReducedMotion;
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const colors = useMemo(() => buildColors(isDark), [isDark]);
+  const heroColors = useMemo(() => buildColors(true), []);
+  const heroIsDark = true;
+  const heroVideoOpacity = heroIsDark ? 0.55 : 0.45;
+  const enableHeroVideo = heroInView && !prefersReducedMotion;
 
-  const handleContact = () => {
-    const encodedMessage = encodeURIComponent(
-      `${formData.message}${formData.name ? `\nNombre o negocio: ${formData.name}` : ''}`
-    );
-    const whatsappUrl = `https://wa.me/541171139469?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
-  };
-
-  const navItems = useMemo(
-    () => [
-      { label: navigation.hero, href: '#hero' },
-      { label: navigation.manifesto, href: '#manifesto' },
-      { label: navigation.services, href: '#services' },
-      { label: navigation.projects, href: '#projects' },
-      { label: navigation.team, href: '#team' },
-      { label: navigation.contact, href: '#contact' },
-    ],
-    [navigation]
+  const contactRotateOptions = useMemo(() => {
+    if (contact.titleRotateOptions && contact.titleRotateOptions.length > 0) {
+      return contact.titleRotateOptions;
+    }
+    return [contact.titleHighlight];
+  }, [contact.titleHighlight, contact.titleRotateOptions]);
+  const contactRotateMaxLen = useMemo(
+    () => Math.max(...contactRotateOptions.map((option) => option.length)),
+    [contactRotateOptions]
   );
+  const [contactRotateIndex, setContactRotateIndex] = useState(0);
+
+  useEffect(() => {
+    setContactRotateIndex(0);
+  }, [locale, contactRotateOptions.length]);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    if (!contactTitleInView) return;
+    if (contactRotateOptions.length <= 1) return;
+
+    const id = window.setInterval(() => {
+      setContactRotateIndex((current) => (current + 1) % contactRotateOptions.length);
+    }, 2200);
+
+    return () => window.clearInterval(id);
+  }, [prefersReducedMotion, contactTitleInView, contactRotateOptions.length]);
 
   const serviceEntries = useMemo(() => {
     const order: ServiceId[] = [
+      'marketing-digital',
       'branding-identidad-visual',
       'landing',
       'ecommerce-profesional',
       'strategy',
-      'marketing-digital',
     ];
     const orderMap = Object.fromEntries(order.map((id, idx) => [id, idx]));
 
@@ -119,57 +175,130 @@ export function CosmicPage({ locale }: { locale: Locale }) {
       ([a], [b]) => (orderMap[a] ?? 99) - (orderMap[b] ?? 99)
     );
   }, [services.items]);
+  const navItems = useMemo(
+    () => [
+      { label: navigation.hero, href: '#hero' },
+      { label: navigation.services, href: '#services' },
+      { label: navigation.projects, href: '#projects' },
+      { label: navigation.contact, href: '#contact' },
+    ],
+    [navigation]
+  );
+  const serviceNavItems = useMemo(
+    () =>
+      serviceEntries.map(([id, copy]) => ({
+        label: serviceNavLabelMap[id]?.[locale] ?? copy.title,
+        href: `/${locale}/services/${getServiceSlug(locale, id)}`,
+      })),
+    [locale, serviceEntries]
+  );
   const projectEntries = useMemo(() => Object.entries(projects.items) as Array<[ProjectId, Dictionary['projects']['items'][ProjectId]]>, [projects.items]);
-  const teamEntries = useMemo(() => Object.entries(team.members) as Array<[TeamMemberId, Dictionary['team']['members'][TeamMemberId]]>, [team.members]);
-  const manifestoGroups = useMemo(() => {
-    if (manifesto.idealForGroups?.length) {
-      return manifesto.idealForGroups;
-    }
 
-      return manifesto.idealForList.length
-      ? [{ label: manifesto.idealForHeading, items: manifesto.idealForList }]
-      : [];
-  }, [manifesto.idealForGroups, manifesto.idealForList, manifesto.idealForHeading]);
+  const scrollProjects = (direction: 'left' | 'right') => {
+    const container = projectsCarouselRef.current;
+    if (!container) return;
+
+    const firstCard = container.querySelector<HTMLElement>('.project-card');
+    const cardWidth = firstCard?.offsetWidth ?? 400;
+    const gap = 32;
+
+    container.scrollBy({
+      left: (cardWidth + gap) * (direction === 'right' ? 1 : -1),
+      behavior: 'smooth',
+    });
+  };
 
   return (
     <div
-      className="relative min-h-screen overflow-hidden bg-[#000000] text-white font-geist-mono"
-      style={{ fontFamily: 'var(--font-geist-mono, "Geist Mono", monospace)' }}
+      className="relative min-h-screen overflow-hidden font-geist-mono text-slate-900 dark:text-white transition-colors"
+      style={{
+        fontFamily: 'var(--font-geist-mono, "Geist Mono", monospace)',
+        backgroundColor: colors.page,
+      }}
     >
       <div className="fixed inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#000000] via-[#0a0d1f] to-[#0d0a1a]" />
         <div
-          className="absolute inset-0 blur-[80px] opacity-[0.05]"
+          className="absolute inset-0"
           style={{
-            background:
-              'radial-gradient(ellipse 1200px 800px at 40% 30%, #4FD4E4 0%, transparent 50%), radial-gradient(ellipse 1000px 700px at 60% 70%, #7B5CFB 0%, transparent 50%)',
+            background: `linear-gradient(to bottom, ${colors.page} 0%, ${colors.overlayTop} 35%, ${colors.overlayBottom} 100%)`,
           }}
         />
         <div
-          className="absolute inset-0 opacity-[0.02]"
+          className="absolute inset-0 blur-[80px]"
+          style={{
+            background:
+              `radial-gradient(ellipse 1200px 800px at 40% 30%, ${colors.glowOne} 0%, transparent 50%), radial-gradient(ellipse 1000px 700px at 60% 70%, ${colors.glowTwo} 0%, transparent 50%)`,
+            opacity: isDark ? 0.05 : 0.12,
+          }}
+        />
+        <div
+          className="absolute inset-0"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.02) 0.5px, transparent 0.5px), linear-gradient(90deg, rgba(255,255,255,0.02) 0.5px, transparent 0.5px)",
+              `linear-gradient(${colors.grid} 0.5px, transparent 0.5px), linear-gradient(90deg, ${colors.grid} 0.5px, transparent 0.5px)`,
             backgroundSize: '60px 60px',
+            opacity: isDark ? 0.35 : 0.6,
           }}
         />
       </div>
 
-      <CosmicHeader navItems={navItems} locale={locale} />
+      <CosmicHeader navItems={navItems} serviceItems={serviceNavItems} locale={locale} />
 
       <main className="relative z-10">
-        <section id="hero" ref={heroRef} className="relative overflow-hidden px-6 pt-32 pb-28 lg:pb-36">
+        <section
+          id="hero"
+          ref={heroRef}
+          className="relative min-h-screen overflow-hidden px-6 pt-32 pb-28 lg:pb-36 dark"
+          style={{ backgroundColor: '#05070d' }}
+        >
           <CinematicAurora variant="hero" animated={false} />
 
+          {enableHeroVideo ? (
+            <div className="absolute inset-0 overflow-hidden" aria-hidden>
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                className="absolute inset-0 h-full w-full object-cover"
+                style={{ opacity: heroVideoOpacity }}
+              >
+                <source src="/herostar.mp4" type="video/mp4" />
+              </video>
+            </div>
+          ) : (
+            <div
+              className="absolute inset-0 overflow-hidden"
+              aria-hidden
+              style={{
+                background:
+                  'radial-gradient(circle at 30% 20%, rgba(79,212,228,0.16), transparent 40%), radial-gradient(circle at 70% 65%, rgba(168,85,247,0.12), transparent 36%), #05070d',
+              }}
+            />
+          )}
+
           <div className="absolute inset-0" aria-hidden>
-            <div className="absolute inset-0 opacity-[0.015]" style={{ background: 'radial-gradient(circle at 30% 20%, rgba(79,212,228,0.2), transparent 45%)' }} />
-            <div className="absolute inset-0 opacity-[0.015]" style={{ background: 'radial-gradient(circle at 70% 65%, rgba(168,85,247,0.14), transparent 40%)' }} />
+            <div
+              className="absolute inset-0"
+              style={{
+                opacity: heroIsDark ? 0.015 : 0,
+                background: 'radial-gradient(circle at 30% 20%, rgba(79,212,228,0.2), transparent 45%)',
+              }}
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                opacity: heroIsDark ? 0.015 : 0,
+                background: 'radial-gradient(circle at 70% 65%, rgba(168,85,247,0.14), transparent 40%)',
+              }}
+            />
             <div
               className="absolute inset-0"
               style={{
                 backgroundImage:
                   'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")',
-                opacity: 0.08,
+                opacity: heroIsDark ? 0.08 : 0.02,
                 mixBlendMode: 'overlay',
               }}
             />
@@ -201,135 +330,103 @@ export function CosmicPage({ locale }: { locale: Locale }) {
             </div>
           </div>
 
-          <div className="relative mx-auto flex max-w-[1180px] flex-col gap-10 text-center">
-            <div className="space-y-4">
-              <motion.p
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 text-[12px] tracking-[0.28em] text-white/70"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                COSMIC STUDIO • DIGITAL SYSTEMS
-              </motion.p>
-
+          <div className="relative mx-auto flex max-w-[1180px] flex-col gap-8 text-center md:gap-10">
+            <div className="space-y-4 sm:space-y-5">
               <motion.h1
-                className="text-5xl leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl font-space-grotesk"
+                className="text-4xl leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl font-space-grotesk"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.05 }}
               >
-                <span className="block text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.08)] font-space-grotesk">{hero.title}</span>
-                <span className="relative inline-block bg-gradient-to-r from-[#22D3EE] via-[#6366F1] to-[#A855F7] bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(79,212,228,0.14)] font-space-grotesk">
+                <span
+                  className="block font-space-grotesk"
+                  style={{ color: heroColors.text, textShadow: heroIsDark ? '0 0 20px rgba(255,255,255,0.08)' : '0 18px 28px rgba(148,163,184,0.35)' }}
+                >
+                  {hero.title}
+                </span>
+                <span
+                  className="relative inline-block bg-gradient-to-r from-[#22D3EE] via-[#6366F1] to-[#A855F7] bg-clip-text text-transparent font-space-grotesk"
+                  style={{
+                    textShadow: `${heroColors.gradientTextShadow}, 0 0 10px rgba(0,0,0,0.25)`,
+                    WebkitTextStroke: '0.4px rgba(255,255,255,0.35)',
+                  }}
+                >
                   {hero.highlight}
                 </span>
               </motion.h1>
 
               <motion.p
-                className="mx-auto max-w-[720px] text-lg text-[#B5C1CE] font-geist-mono"
+                className="mx-auto max-w-[360px] text-base leading-relaxed font-geist-mono sm:max-w-[540px] md:max-w-[720px] md:text-lg mt-5"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.15 }}
+                style={{ color: '#ffffff' }}
               >
                 {hero.description}
               </motion.p>
             </div>
 
             <motion.div
-              className="flex justify-center"
+              className="flex justify-center mt-2 md:mt-4"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.25 }}
             >
               <a
                 href="#services"
-                className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-gradient-to-r from-[#22D3EE] to-[#A855F7] px-10 py-3.5 text-[15px] font-medium text-white shadow-[0_0_32px_rgba(168,85,247,0.35),0_0_18px_rgba(34,211,238,0.28),inset_0_1px_0_rgba(255,255,255,0.18),inset_0_0_20px_rgba(34,211,238,0.1)]"
+                className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full px-10 py-3.5 text-[15px] font-medium text-white shadow-[0_0_32px_rgba(168,85,247,0.28),0_0_18px_rgba(34,211,238,0.24),inset_0_1px_0_rgba(255,255,255,0.16),inset_0_0_20px_rgba(34,211,238,0.08)]"
+                style={{
+                  backgroundImage: `linear-gradient(90deg, ${heroColors.ctaFrom}, ${heroColors.ctaTo})`,
+                  boxShadow: heroIsDark
+                    ? '0 0 32px rgba(168,85,247,0.35), 0 0 18px rgba(34,211,238,0.28), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 0 20px rgba(34,211,238,0.1)'
+                    : '0 20px 48px rgba(37,99,235,0.18), 0 0 18px rgba(14,165,233,0.18), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 0 20px rgba(14,165,233,0.12)',
+                }}
               >
                 <span className="relative z-10">{hero.cta}</span>
                 <ArrowRight className="relative z-10 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                <span className="absolute inset-0 bg-gradient-to-r from-[#22D3EE] to-[#A855F7] opacity-[0.15] blur-xl transition-opacity group-hover:opacity-[0.45]" />
-                <span className="absolute inset-0 rounded-full border border-cyan-400/20" />
+                <span
+                  className="absolute inset-0 rounded-full"
+                  style={{
+                    backgroundImage: `linear-gradient(90deg, ${heroColors.ctaFrom}, ${heroColors.ctaTo})`,
+                    opacity: 0.18,
+                    filter: 'blur(18px)',
+                  }}
+                />
+                <span
+                  className="absolute inset-0 rounded-full"
+                  style={{ border: `1px solid ${heroIsDark ? 'rgba(34,211,238,0.2)' : 'rgba(14,165,233,0.35)'}` }}
+                />
               </a>
+            </motion.div>
+
+            <motion.div
+              className="mt-4 flex items-center justify-center gap-2 text-xs text-slate-200 md:hidden"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: 0.35 }}
+            >
+              <ChevronDown className="h-4 w-4" />
+              <span className="tracking-wide">Desliza para ver más</span>
             </motion.div>
           </div>
         </section>
 
-        <section id="manifesto" className="relative overflow-hidden px-6 py-32">
-          <CinematicAurora variant="section" animated={false} />
-          <div className="absolute inset-0" aria-hidden>
-            <div className="absolute inset-0 opacity-[0.01]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 0.5px, transparent 0.5px), linear-gradient(90deg, rgba(255,255,255,0.02) 0.5px, transparent 0.5px)', backgroundSize: '60px 60px' }} />
-          </div>
-
-          <div className="relative mx-auto max-w-[1100px] space-y-10 text-center">
-            <div className="flex justify-center">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-slate-950/50 px-6 py-3 text-[11px] tracking-[1.7px] text-white/90">
-                {manifesto.tagline.toUpperCase()}
-              </div>
-            </div>
-
-            <h2
-              className="text-white drop-shadow-[0_0_30px_rgba(79,212,228,0.12)] font-space-grotesk"
-              style={{ fontSize: '52px', lineHeight: 1.15 }}
-            >
-              {manifesto.headline}
-            </h2>
-
-            <p className="mx-auto max-w-3xl text-lg leading-[1.65] text-white/80 font-geist-mono">
-              {manifesto.description}
-            </p>
-
-            <div className="relative mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {manifestoGroups.map((group, idx) => {
-                const palette = [
-                  { from: 'rgba(79, 212, 228, 0.9)', to: 'rgba(6, 182, 212, 0.9)', glow: 'rgba(79, 212, 228, 0.28)' },
-                  { from: 'rgba(196, 91, 255, 0.9)', to: 'rgba(168, 85, 247, 0.9)', glow: 'rgba(196, 91, 255, 0.28)' },
-                  { from: 'rgba(246, 189, 96, 0.9)', to: 'rgba(244, 114, 182, 0.9)', glow: 'rgba(244, 114, 182, 0.28)' },
-                ];
-                const colors = palette[idx % palette.length];
-
-                return (
-                  <motion.div
-                    key={group.label}
-                    initial={{ opacity: 0, y: 18 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-50px" }}
-                    transition={{ duration: 0.6, delay: idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                    className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-6 shadow-[0_16px_40px_rgba(0,0,0,0.28)]"
-                  >
-                    <div
-                      className="absolute inset-0 opacity-70"
-                      style={{
-                        background: `linear-gradient(135deg, ${colors.from} 0%, ${colors.to} 100%)`,
-                        filter: 'blur(40px)',
-                      }}
-                      aria-hidden
-                    />
-                    <div className="relative space-y-3">
-                      <p className="text-sm font-space-grotesk text-white drop-shadow-[0_0_14px_rgba(0,0,0,0.35)]">
-                        {group.label}
-                      </p>
-                      <ul className="space-y-2 text-[13px] leading-relaxed text-white/85">
-                        {group.items.map((item) => (
-                          <li key={item} className="flex items-start gap-2">
-                            <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-white/80 shadow-[0_0_10px_rgba(255,255,255,0.6)]" />
-                            <span className="font-geist-mono">{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
+        <AboutCosmicStudioSection about={about} colors={colors} isDark={isDark} />
 
         <section id="services" className="relative overflow-hidden px-6 py-36">
           <CinematicAurora variant="section" animated={false} />
           <div className="relative z-10 mx-auto max-w-[1500px]">
             <div className="text-center">
-              <h2 className="text-5xl tracking-tight drop-shadow-[0_0_20px_rgba(255,255,255,0.08)] font-space-grotesk">{services.heading}</h2>
-              <p className="mx-auto mt-4 max-w-[780px] text-[#B5C1CE] leading-relaxed font-geist-mono">{services.description}</p>
-              <p className="mt-6 text-[13px] tracking-wide text-[#8A99A8] font-geist-mono">{services.scrollHint}</p>
+              <h2 className="text-5xl tracking-tight font-space-grotesk text-slate-900 dark:text-white">{services.heading}</h2>
+              <p className="mx-auto mt-4 max-w-[780px] leading-relaxed font-geist-mono" style={{ color: colors.mutedText }}>
+                {services.description}
+              </p>
+              <p
+                className="mt-6 text-[13px] tracking-wide font-geist-mono text-slate-500 dark:text-slate-200"
+                style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#475569' }}
+              >
+                {services.scrollHint}
+              </p>
             </div>
 
             <div className="mt-16 flex flex-col gap-12">
@@ -338,6 +435,7 @@ export function CosmicPage({ locale }: { locale: Locale }) {
                   key={id}
                   icon={serviceVisuals[id].icon}
                   title={copy.title}
+                  eyebrow={copy.eyebrow ?? copy.title}
                   headline={copy.headline}
                   description={copy.description}
                   tag={services.keyBenefitLabel}
@@ -350,7 +448,7 @@ export function CosmicPage({ locale }: { locale: Locale }) {
                   features={copy.features}
                   ctaLabel={copy.ctaLabel ?? services.viewMore}
                   reasonLabel={services.detailPage.outcomesTitle}
-                  href={`/${locale}/services/${id}`}
+                  href={`/${locale}/services/${getServiceSlug(locale, id)}`}
                   imageSrc={copy.imageSrc ?? '/Servicios/web-cosmic.png'}
                   imageAlt={copy.imageAlt}
                   imageSide={copy.imageSide as "left" | "right" | undefined}
@@ -360,188 +458,162 @@ export function CosmicPage({ locale }: { locale: Locale }) {
           </div>
         </section>
 
-        <section id="projects" className="relative overflow-hidden px-6 py-36">
-          <CinematicAurora variant="section" animated={false} />
-          <div className="relative z-10 mx-auto max-w-[1180px]">
+        <ProcessSection process={process} colors={colors} isDark={isDark} />
+
+        <section id="projects" className="relative px-6 py-36">
+          <div className="relative z-10 mx-auto max-w-[1280px]">
             <div className="text-center">
-              <h2 className="text-5xl tracking-tight drop-shadow-[0_0_20px_rgba(255,255,255,0.08)] font-space-grotesk">{projects.heading}</h2>
-              <p className="mx-auto mt-4 max-w-[720px] text-[#B5C1CE] font-geist-mono">{projects.description}</p>
+              <h2 className="text-5xl tracking-tight font-space-grotesk text-slate-900 dark:text-white">{projects.heading}</h2>
+              <p className="mx-auto mt-4 max-w-[720px] font-geist-mono" style={{ color: colors.mutedText }}>
+                {projects.description}
+              </p>
             </div>
 
-            <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {projectEntries.map(([id, copy], idx) => (
-                <CosmicProjectCard
-                  key={id}
-                  title={copy.title}
-                  description={copy.subtitle}
-                  tags={copy.tags}
-                  image={projectMedia[id]?.image}
-                  logo={projectMedia[id]?.logo}
-                  index={idx}
-                  href={projectMedia[id]?.href}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="team" className="relative overflow-hidden px-6 py-36">
-          <CinematicAurora variant="section" animated={false} />
-          <div className="relative z-10 mx-auto max-w-[1180px] space-y-10">
-            <div className="text-center">
-              <h2 className="text-5xl tracking-tight drop-shadow-[0_0_20px_rgba(255,255,255,0.08)] font-space-grotesk">{team.heading}</h2>
-              <p className="mx-auto mt-4 max-w-[760px] text-[#B5C1CE] font-geist-mono">{team.description}</p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {teamEntries.map(([id, copy], idx) => {
-                const portrait = teamPortraits[id];
-
-                return (
-                  <motion.div
-                    key={id}
-                    className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 p-1 shadow-[0_16px_40px_rgba(0,0,0,0.28)]"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: idx * 0.08 }}
-                  >
-                    <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-white/5 to-white/0">
-                      <div className="relative h-64 w-full overflow-hidden">
-                        <Image
-                          src={portrait.base}
-                          alt={copy.role}
-                          fill
-                          sizes="(min-width: 1024px) 320px, (min-width: 768px) 50vw, 100vw"
-                          className={`object-cover transition-all duration-500 group-hover:scale-[1.05] ${
-                            portrait.hover ? 'opacity-100 group-hover:opacity-0' : ''
-                          }`}
-                          priority={idx === 0}
-                        />
-                        {portrait.hover ? (
-                          <Image
-                            src={portrait.hover}
-                            alt={copy.role}
-                            fill
-                            sizes="(min-width: 1024px) 320px, (min-width: 768px) 50vw, 100vw"
-                            className="object-cover opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-[1.05]"
-                            loading="eager"
-                          />
-                        ) : null}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
-                      </div>
-                      <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" aria-hidden>
-                        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10" />
-                      </div>
-                      <div className="absolute top-4 left-4 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[12px] tracking-[0.2em] text-white/80">
-                        TEAM
-                      </div>
-                      <div className="absolute bottom-0 left-0 right-0 space-y-1 px-6 pb-5">
-                        <h3 className="text-xl text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.4)] font-space-grotesk">{copy.role}</h3>
-                        <p className="text-sm text-white/80 font-geist-mono">{copy.description}</p>
-                      </div>
-                      <div className="absolute bottom-4 right-4 flex items-center gap-2">
-                        <a
-                          href="https://www.linkedin.com/company/cosmic-st/"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0077b5] text-white shadow-[0_2px_12px_rgba(0,119,181,0.6)]"
-                        >
-                          <Linkedin className="h-4 w-4" />
-                        </a>
-                      </div>
+            <div className="relative mt-16">
+              <div
+                ref={projectsCarouselRef}
+                className="carousel-wrapper overflow-x-auto overflow-y-visible pb-6 pt-4"
+                style={{
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  WebkitOverflowScrolling: 'touch',
+                  scrollSnapType: 'x mandatory',
+                  scrollPadding: '0 24px',
+                  overscrollBehaviorX: 'contain',
+                  scrollBehavior: 'smooth',
+                }}
+              >
+                <style>{`
+                  .carousel-wrapper::-webkit-scrollbar { display: none; }
+                  .carousel-track { display: flex; gap: 32px; }
+                `}</style>
+                <div className="carousel-track snap-x pl-2 pr-8 md:pl-4 md:pr-8">
+                  {projectEntries.map(([id, copy], idx) => (
+                    <div
+                      key={id}
+                      className="project-card snap-start flex-shrink-0"
+                      style={{ width: 'clamp(360px, 80vw, 420px)' }}
+                    >
+                      <CosmicProjectCard
+                        title={copy.title}
+                        description={copy.subtitle}
+                        tags={copy.tags}
+                        image={projectMedia[id]?.image}
+                        logo={projectMedia[id]?.logo}
+                        index={idx}
+                        href={projectMedia[id]?.href}
+                      />
                     </div>
-                  </motion.div>
-                );
-              })}
-            </div>
+                  ))}
+                </div>
+              </div>
 
-            <div className="flex items-center justify-center gap-3 text-sm">
-              <div className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.7)]" />
-              <span className="tracking-wide text-emerald-400">{contact.systemStatus}</span>
-              <span className="text-[#6A7282]">•</span>
-              <span className="tracking-wide text-[#A8B3BF]">COLABORACIÓN EN TIEMPO REAL</span>
+              <div className="pointer-events-none absolute inset-0 hidden items-center justify-between px-4 md:flex">
+                <button
+                  type="button"
+                  aria-label="Scroll left"
+                  onClick={() => scrollProjects('left')}
+                  className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full border shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition hover:scale-[1.04]"
+                  style={{
+                    borderColor: colors.cardBorder,
+                    background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.95)',
+                    color: isDark ? 'white' : '#0f172a',
+                  }}
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Scroll right"
+                  onClick={() => scrollProjects('right')}
+                  className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full border shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition hover:scale-[1.04]"
+                  style={{
+                    borderColor: colors.cardBorder,
+                    background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.95)',
+                    color: isDark ? 'white' : '#0f172a',
+                  }}
+                >
+                  <ArrowRight className="h-5 w-5" />
+                </button>
+              </div>
             </div>
           </div>
         </section>
 
         <section id="contact" className="relative overflow-hidden px-6 pb-36 pt-24">
-          <CinematicAurora variant="contact" animated />
+          {!gpuFlags.noAurora && <CinematicAurora variant="contact" animated={false} />}
           <div className="relative z-10 mx-auto max-w-[1180px]">
             <div className="text-center">
-              <h2 className="mb-6 text-5xl tracking-wide drop-shadow-[0_0_25px_rgba(168,85,247,0.12)] font-space-grotesk">
+              <h2
+                ref={contactTitleRef}
+                className="mb-6 text-5xl leading-[1.12] tracking-wide drop-shadow-[0_0_25px_rgba(168,85,247,0.12)] font-space-grotesk"
+              >
                 <span className="bg-gradient-to-r from-[#22D3EE] via-[#6366F1] to-[#A855F7] bg-clip-text text-transparent">
-                  {contact.titleBeforeHighlight} {contact.titleHighlight}{contact.titleAfterHighlight}
+                  {contact.titleBeforeHighlight}
+                </span>{' '}
+                <span className="relative inline-block align-baseline" style={{ minWidth: `${contactRotateMaxLen}ch` }}>
+                  {!prefersReducedMotion && contactRotateOptions.length > 1 ? (
+                    <>
+                      <span className="invisible inline-block whitespace-nowrap bg-gradient-to-r from-[#22D3EE] via-[#6366F1] to-[#A855F7] bg-clip-text text-transparent">
+                        {contactRotateOptions[contactRotateIndex]}
+                      </span>
+                      <AnimatePresence initial={false}>
+                        <motion.span
+                          key={contactRotateOptions[contactRotateIndex]}
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.35, ease: 'easeOut' }}
+                          className="absolute left-0 top-0 inline-block whitespace-nowrap bg-gradient-to-r from-[#22D3EE] via-[#6366F1] to-[#A855F7] bg-clip-text text-transparent"
+                        >
+                          {contactRotateOptions[contactRotateIndex]}
+                        </motion.span>
+                      </AnimatePresence>
+                    </>
+                  ) : (
+                    <span className="inline-block whitespace-nowrap bg-gradient-to-r from-[#22D3EE] via-[#6366F1] to-[#A855F7] bg-clip-text text-transparent">
+                      {contactRotateOptions[0]}
+                    </span>
+                  )}
                 </span>
+                {contact.titleAfterHighlight ? (
+                  <span className="bg-gradient-to-r from-[#22D3EE] via-[#6366F1] to-[#A855F7] bg-clip-text text-transparent">
+                    {contact.titleAfterHighlight}
+                  </span>
+                ) : null}
               </h2>
-              <p className="text-lg text-[#D4DBE1] font-geist-mono">{contact.description}</p>
+              <p className="text-lg font-geist-mono" style={{ color: colors.mutedText }}>
+                {contact.description}
+              </p>
             </div>
 
-            <div className="mx-auto mt-12 max-w-[960px]">
-              <div className="relative overflow-hidden rounded-[32px] border border-cyan-400/10 bg-gradient-to-br from-cyan-500/[0.04] via-purple-500/[0.03] to-pink-500/[0.02] p-1 shadow-[0_25px_80px_-15px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.04)]">
-                <div className="rounded-[28px] bg-[#0F171E]/70 p-10 backdrop-blur-xl">
-                  <form
-                    className="space-y-8"
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      handleContact();
-                    }}
-                  >
-                    <div className="space-y-2">
-                      <label className="block text-[11px] tracking-[1.2px] text-[#9BA8B5] uppercase">{contact.nameLabel}</label>
-                      <div className="relative">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9BA8B5]" />
-                        <input
-                          type="text"
-                          value={formData.name}
-                          onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-                          placeholder={contact.namePlaceholder}
-                          className="w-full rounded-xl border border-white/10 bg-black/30 px-12 py-4 text-white placeholder:text-[#5A6775] outline-none transition focus:border-cyan-400/35 focus:ring-1 focus:ring-cyan-400/15"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="block text-[11px] tracking-[1.2px] text-[#9BA8B5] uppercase">{contact.messageLabel}</label>
-                      <div className="relative">
-                        <MessageCircle className="absolute left-4 top-4 h-4 w-4 text-[#9BA8B5]" />
-                        <textarea
-                          rows={4}
-                          value={formData.message}
-                          onChange={(e) => setFormData((prev) => ({ ...prev, message: e.target.value }))}
-                          placeholder={contact.defaultMessage}
-                          className="w-full resize-none rounded-xl border border-white/10 bg-black/30 px-12 py-4 text-white placeholder:text-[#5A6775] outline-none transition focus:border-cyan-400/35 focus:ring-1 focus:ring-cyan-400/15"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex justify-center pt-2">
-                      <button
-                        type="submit"
-                        className="relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-gradient-to-r from-[#22D3EE] to-[#A855F7] px-10 py-3.5 text-[15px] font-medium text-white shadow-[0_0_32px_rgba(168,85,247,0.35),0_0_18px_rgba(34,211,238,0.28),inset_0_1px_0_rgba(255,255,255,0.18),inset_0_0_20px_rgba(34,211,238,0.1)]"
-                      >
-                        <span className="relative z-10">{contact.buttonLabel}</span>
-                        <ArrowRight className="relative z-10 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                        <span className="absolute inset-0 bg-gradient-to-r from-[#22D3EE] to-[#A855F7] opacity-[0.15] blur-xl transition-opacity" />
-                        <span className="absolute inset-0 rounded-full border border-cyan-400/20" />
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
+            <div className="mx-auto mt-12 max-w-[960px]" data-gpu-contactfx={gpuFlags.noContactFx ? "off" : "on"}>
+              <ContactMessageCard />
 
               <div className="mt-10 space-y-4 text-center">
-                <a href={`mailto:${contact.contactLine.replace('→ ', '')}`} className="text-[#9FAEBA] hover:text-cyan-400 transition-colors">
+                <a
+                  href={`mailto:${contact.contactLine.replace('→ ', '')}`}
+                  className="hover:text-cyan-500 dark:hover:text-cyan-300 transition-colors"
+                  style={{ color: colors.mutedText }}
+                >
                   {contact.contactLine.replace('→ ', '')}
                 </a>
-                <div className="flex items-center justify-center gap-6 text-sm text-[#9FAEBA]">
+                <div className="flex items-center justify-center gap-6 text-sm" style={{ color: colors.mutedText }}>
                   {contact.socials.map((social) => (
-                    <a key={social.label} href={social.href} target="_blank" rel="noreferrer" className="hover:text-white transition-colors">
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="transition-colors hover:text-cyan-500 dark:hover:text-white"
+                    >
                       {social.label}
                     </a>
                   ))}
                 </div>
-                <p className="text-xs text-white/40">{contact.footerNote.replace('{year}', new Date().getFullYear().toString())}</p>
+                <p className="text-xs" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : '#94a3b8' }}>
+                  {contact.footerNote.replace('{year}', new Date().getFullYear().toString())}
+                </p>
               </div>
             </div>
           </div>

@@ -22,8 +22,51 @@ export const serviceIds: ServiceId[] = [
   "strategy",
   "marketing-digital",
 ];
+export const serviceSlugs: Record<ServiceId, Record<Locale, string>> = {
+  "branding-identidad-visual": {
+    es: "branding-identidad-visual",
+    en: "visual-identity-branding",
+  },
+  landing: {
+    es: "landing",
+    en: "web-design-landing",
+  },
+  "ecommerce-profesional": {
+    es: "ecommerce-profesional",
+    en: "professional-ecommerce",
+  },
+  strategy: {
+    es: "strategy",
+    en: "strategy",
+  },
+  "marketing-digital": {
+    es: "marketing-digital",
+    en: "digital-marketing",
+  },
+};
 export type ProjectId = "gestock" | "pew" | "miproveedor" | "tiendix";
 export type TeamMemberId = "jorge" | "paola" | "samira";
+export function getServiceSlug(locale: Locale, serviceId: ServiceId): string {
+  return serviceSlugs[serviceId]?.[locale] ?? serviceId;
+}
+
+export function getServiceIdFromSlug(
+  locale: Locale,
+  slug?: string | null
+): ServiceId | undefined {
+  if (!slug) return undefined;
+
+  const match = Object.entries(serviceSlugs).find(
+    ([, localized]) =>
+      localized[locale] === slug || Object.values(localized).includes(slug)
+  );
+
+  if (match?.[0]) {
+    return match[0] as ServiceId;
+  }
+
+  return serviceIds.includes(slug as ServiceId) ? (slug as ServiceId) : undefined;
+}
 
 export type Dictionary = {
   metadata: {
@@ -43,13 +86,25 @@ export type Dictionary = {
     description: string;
     cta: string;
   };
+  process: {
+    eyebrow: string;
+    title: string;
+    steps: { title: string; description: string }[];
+    editorialAlt: string;
+  };
+  about: {
+    eyebrow: string;
+    title: string;
+    paragraphs: string[];
+    abstractAlt: string;
+    studioAlt: string;
+    studioCaption: string;
+  };
   manifesto: {
     tagline: string;
     headline: string;
-    description: string;
-    idealForHeading: string;
-    idealForList: string[];
-    idealForGroups?: { label: string; items: string[] }[];
+    subheadline: string;
+    cards: { title: string; items: string[] }[];
   };
   services: {
     heading: string;
@@ -80,6 +135,7 @@ export type Dictionary = {
       ServiceId,
       {
         title: string;
+        eyebrow?: string;
         description: string;
         benefit: string;
         estimatedTime?: string;
@@ -113,9 +169,11 @@ export type Dictionary = {
         heroCta?: string;
         benefitsTitle?: string;
         benefitsIntro?: string;
+        benefitsNarrative?: string;
         benefits?: { title: string; description: string }[];
         painTitle?: string;
         painIntro?: string;
+        painNarrative?: string;
         painPoints?: string[];
         painConclusion?: string;
         includesTitle?: string;
@@ -164,12 +222,26 @@ export type Dictionary = {
   contact: {
     titleBeforeHighlight: string;
     titleHighlight: string;
+    titleRotateOptions: string[];
     titleAfterHighlight: string;
     description: string;
     nameLabel: string;
     namePlaceholder: string;
     messageLabel: string;
+    messagePlaceholder: string;
+    interestLabel: string;
+    interestHelper: string;
+    interestPlaceholder: string;
+    interestOptions: { id: ServiceId; label: string }[];
+    interestIntro: string;
+    interestFallback: string;
     defaultMessage: string;
+    directMessageLabel: string;
+    sendEmailLabel: string;
+    sendWhatsappLabel: string;
+    greetingPrefix: string;
+    nameFallback: string;
+    emailSubject: string;
     buttonLabel: string;
     contactLine: string;
     socials: { label: string; href: string }[];
@@ -181,12 +253,12 @@ export type Dictionary = {
 const dictionaries: Record<Locale, Dictionary> = {
   es: {
     metadata: {
-      title: "Cosmic Studio — Experiencias digitales",
+      title: "Cosmic Studio | Estudio creativo y agencia digital: branding, diseño web y sistemas",
       description:
-        "Cosmic Studio crea experiencias, identidades y productos digitales que combinan estrategia, diseño y tecnología para impulsar resultados reales.",
-      ogTitle: "Cosmic Studio — Experiencias digitales bilingües",
+        "Branding profesional, diseño web profesional, ecommerce, diseño UX/UI, marketing digital y desarrollo web a medida. Estudio creativo bilingüe que diseña landing page profesional, sistemas y experiencias listas para escalar.",
+      ogTitle: "Cosmic Studio — Branding, diseño web y sistemas digitales",
       ogDescription:
-        "Trabajamos junto a emprendedores, tiendas físicas y distribuidores que quieren modernizar su manera de operar.",
+        "Estudio creativo y agencia digital. Branding profesional, diseño web, ecommerce, marketing digital y software a medida en ES/EN para marcas que quieren crecer.",
     },
     languageSwitcher: {
       label: "Idioma",
@@ -204,40 +276,78 @@ const dictionaries: Record<Locale, Dictionary> = {
       contact: "Contacto",
     },
     hero: {
-      title: "Sistemas digitales que conectan",
-      highlight: "estrategia, diseño y tecnología.",
-      description:
-        "Trabajamos junto a emprendedores, tiendas físicas y distribuidores que quieren modernizar su manera de operar.",
+      title: "Estrategia, diseño y tecnología",
+      highlight: "para impulsar tu negocio.",
+      description: "Marketing, branding y soluciones web en un mismo universo.",
       cta: "Explorar servicios",
     },
+    process: {
+      eyebrow: "CÓMO TRABAJAMOS",
+      title: "Un camino claro de inicio a fin",
+      steps: [
+        {
+          title: "Diagnóstico claro",
+          description: "Analizamos tu marca, tus necesidades y tu momento de crecimiento.",
+        },
+        {
+          title: "Diseño estratégico",
+          description: "Creamos soluciones visuales y digitales con propósito, no plantillas.",
+        },
+        {
+          title: "Implementación limpia",
+          description: "Diseño, desarrollo y automatización con procesos fluidos y comunicación clara.",
+        },
+        {
+          title: "Entrega profesional",
+          description: "Entregables completos, organizados y listos para usar.",
+        },
+        {
+          title: "Evolución continua",
+          description: "Te acompañamos para que tu marca crezca con orden.",
+        },
+      ],
+      editorialAlt: "Ilustración abstracta de un flujo de trabajo con luces y formas geométricas limpias",
+    },
+    about: {
+      eyebrow: "QUIÉNES SOMOS",
+      title: "Somos Cosmic Studio",
+      paragraphs: [
+        "Un estudio de diseño y tecnología que combina estrategia, claridad y herramientas modernas para crear experiencias digitales que evolucionan.",
+        "Diseñamos marcas, sitios web, tiendas online y soluciones a medida con un enfoque editorial, funcional y ordenado.",
+        "Nuestro proceso integra pensamiento de producto, diseño limpio y tecnología preparada para escalar.",
+      ],
+      abstractAlt: "Foto del equipo de Cosmic Studio trabajando en su estudio",
+      studioAlt: "Foto del estudio de Cosmic Studio: espacio de trabajo",
+      studioCaption: "Un estudio ordenado para ideas claras.",
+    },
     manifesto: {
-      tagline: "Diseño que conecta + sistemas que ordenan",
-      headline:
-        "Digitalizamos tus procesos para que tu negocio crezca con orden, claridad y eficiencia.",
-      description:
-        "Transformamos tareas manuales en sistemas simples y visuales que mejoran tus procesos. No más desorden ni personal explotado.",
-      idealForHeading: "Escenarios típicos",
-      idealForList: [],
-      idealForGroups: [
+      tagline: "Digitalizamos tus procesos para que tu negocio crezca con orden, claridad y eficiencia.",
+      headline: "Digitalizamos tus procesos para que tu negocio funcione mejor.",
+      subheadline:
+        "Transformamos los pasos de tu negocio en un sistema digital simple, visual y eficiente que ordena tus operaciones y te devuelve tiempo.",
+      cards: [
         {
-          label: "Problemas operativos",
+          title: "Problemas operativos que frenan tu negocio",
           items: [
-            "Toman pedidos por WhatsApp o cuadernos",
-            "Pierden tiempo con tareas manuales",
-            "No controlan stock o vencimientos",
+            "Pedidos dispersos en WhatsApp, Excel o cuadernos.",
+            "Tareas repetitivas que consumen tiempo.",
+            "Falta de control real de stock y vencimientos."
           ],
         },
         {
-          label: "Gestión y decisiones",
+          title: "Gestión limitada y decisiones sin información",
           items: [
-            "Demasiada carga laboral",
-            "Necesitan información confiable para decidir",
+            "Carga laboral excesiva y sensación de apagar incendios todo el día.",
+            "Información incompleta o desactualizada para decidir.",
+            "Dependencia de una sola persona para que todo funcione."
           ],
         },
         {
-          label: "Metas",
+          title: "Metas reales del negocio",
           items: [
-            "Desean crecer con orden y dirección",
+            "Crecer sin que el equipo se queme.",
+            "Tener información clara y centralizada en un sistema.",
+            "Tomar decisiones con datos confiables, no solo con intuición."
           ],
         },
       ],
@@ -245,8 +355,8 @@ const dictionaries: Record<Locale, Dictionary> = {
     services: {
       heading: "Servicios",
       description:
-        "Unimos diseño, automatización y estrategia para que cada punto de contacto digital se sienta consistente, humano y listo para crecer.",
-      scrollHint: "Bajá para explorar cada servicio en detalle",
+        "Diseño claro, procesos automatizados y una estrategia que da coherencia a cada interacción con tu marca",
+      scrollHint: "",
       viewMore: "Ver más",
       keyBenefitLabel: "Ideal para",
       detailPage: {
@@ -270,13 +380,15 @@ const dictionaries: Record<Locale, Dictionary> = {
       },
       items: {
         "branding-identidad-visual": {
+          eyebrow: "Branding & Identidad Visual",
           title: "Branding Profesional para Marcas que Quieren Crecer",
-          headline: "Diseñamos identidades visuales claras, coherentes y memorables que elevan tu marca desde el primer vistazo.",
+          headline: "Identidades visuales que ordenan, diferencian y elevan tu marca.",
           description:
-            "Branding e identidad visual profesional para marcas que quieren crecer. Diseñamos sistemas visuales coherentes y memorables que generan confianza.",
+            "Diseñamos sistemas visuales coherentes y memorables que generan confianza.",
           benefit:
             "Emprendedores, negocios y marcas digitales que necesitan identidad visual clara, coherente y memorable.",
-          estimatedTime: "10-20 días según el plan.",
+          estimatedTime: "Entrega estimada: 15–25 días según el plan",
+          startingPrice: "Inversión desde USD 280",
           imageSrc: "/Servicios/AURO.PNG",
           imageSide: "right",
           features: [
@@ -304,9 +416,10 @@ const dictionaries: Record<Locale, Dictionary> = {
           imageAlt: "Brandboard de branding completo con logo, paleta y tipografías por Cosmic Studio",
         },
         landing: {
-          title: "Diseño Web Profesional & Rediseño Moderno",
+          eyebrow: "Diseño Web Profesional",
+          title: "Creamos webs claras, rápidas y confiables que impulsan tu presencia digital.",
           description:
-            "Creamos webs claras, rápidas y confiables que impulsan tu presencia digital. Si lanzás tu primera web, conectamos tu idea con el mundo. Si tu sitio se siente viejo o lento, lo renovamos con diseño inteligente y experiencia clara desde el primer vistazo.",
+            "Creamos sitios web claros, rápidos y confiables que representan tu marca con precisión. Si tu sitio se siente viejo o lento, lo renovamos con un diseño inteligente y estratégico.",
           estimatedTime: "Entrega estimada: 5–7 días",
           startingPrice: "Inversión desde USD 120",
           benefit:
@@ -317,9 +430,12 @@ const dictionaries: Record<Locale, Dictionary> = {
           imageSide: "left",
         },
         "ecommerce-profesional": {
-          title: "Ecommerce Profesional & Tiendas Online a Medida",
+          eyebrow: "Ecommerce Profesional",
+          title: "Creamos tiendas online rápidas, claras y optimizadas para vender más",
           description:
-            "Creamos tiendas online rápidas, claras y optimizadas para vender más. Diseños a medida, sin plantillas genéricas, con experiencia moderna y alineada a tu marca.",
+            "Diseños a medida, sin plantillas genéricas, con experiencia moderna y alineada a tu marca.",
+          estimatedTime: "Entrega estimada: 15–30 días según funcionalidades",
+          startingPrice: "Inversión desde USD 300",
           benefit:
             "Emprendedores, negocios físicos y marcas en crecimiento que necesitan una tienda online sólida, confiable y lista para escalar.",
           ctaLabel: "Ver servicio de Ecommerce",
@@ -328,22 +444,26 @@ const dictionaries: Record<Locale, Dictionary> = {
           imageSide: "right",
         },
         "marketing-digital": {
-          title: "Hacé crecer tu marca, estratégicamente.",
+          eyebrow: "Marketing Digital",
+          title: "Haz que tu marca crezca.",
           description:
-            "Tener presencia digital no alcanza: necesitás una estrategia clara, coherente y medible que conecte con la audiencia correcta. Planes que integran contenido profesional, campañas pagas, segmentación, copywriting persuasivo, analítica y optimización continua.",
+            "Tener presencia digital no alcanza: necesitás una estrategia clara, coherente y medible que conecte con la audiencia correcta. Diseñamos planes que integran contenido, campañas pagas, segmentación y analítica para optimizar cada punto de contacto.",
+          estimatedTime: "Entrega estimada: 7–10 días para la estrategia inicial",
+          startingPrice: "Inversión desde USD 120",
           benefit:
             "Marcas con branding/web/ecommerce, emprendimientos y negocios que quieren crecer con estrategia real y decisiones basadas en datos.",
           ctaLabel: "Ver servicio de Marketing",
           imageSrc: "/pew.png",
           imageAlt: "Ejemplo de marketing digital estratégico creado por Cosmic Studio",
-          imageSide: "right",
+          imageSide: "left",
         },
         strategy: {
-          title: "Software a Medida & Sistemas Personalizados",
+          eyebrow: "Software a Medida",
+          title: "Un solo sistema. Todo tu negocio funcionando",
           description:
-            "Un solo sistema. Todo tu negocio funcionando. Software a medida que integra ventas, inventario, logística, proveedores, clientes, tareas, reportes y automatizaciones en un mismo lugar.",
+            "Software a medida que integra ventas, inventario, logística, proveedores, clientes, tareas, reportes y automatizaciones en un mismo lugar.",
           estimatedTime: "Entrega estimada: 30–60 días",
-          startingPrice: "Inversión desde USD 2.000",
+          startingPrice: "Inversión desde USD 350",
           benefit:
             "Negocios, tiendas, distribuidores y equipos operativos que necesitan orden, visibilidad y automatización real para escalar sin caos.",
           ctaLabel: "Ver servicio de Sistemas",
@@ -356,7 +476,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         "branding-identidad-visual": {
           eyebrow: "Branding e Identidad Visual Profesional",
           intro:
-            "Diseñamos identidades visuales claras, coherentes y memorables que elevan tu marca desde el primer vistazo.",
+            "Creamos identidades visuales profesionales que ordenan, comunican y diferencian tu marca desde el primer segundo.",
           outcomes: [
             "Tu marca deja de verse igual que todas y se recuerda.",
             "Comunicación clara: tu valor se entiende en segundos.",
@@ -397,41 +517,37 @@ const dictionaries: Record<Locale, Dictionary> = {
           heroCta: "Quiero mi identidad profesional",
           benefitsTitle: "Beneficios del Branding Profesional",
           benefitsIntro: "¿Por qué elegir branding profesional?",
+          benefitsNarrative: "Una identidad sólida ordena tu marca, comunica mejor y potencia tu crecimiento.",
           benefits: [
             {
               title: "Diferenciación inmediata",
-              description: "Tu marca deja de verse igual que todas.",
+              description: "Tu marca deja de perderse entre tantas y se vuelve reconocible al instante.",
             },
             {
-              title: "Comunicación clara y efectiva",
-              description: "Tus clientes entienden tu valor en segundos.",
+              title: "Comunicación clara",
+              description: "Tu mensaje se entiende sin explicaciones: transmitís valor con claridad.",
             },
             {
-              title: "Atracción del cliente ideal",
-              description: "Narrativa + estilo alineados a tu propósito.",
-            },
-            {
-              title: "Ahorro de tiempo y menos improvisación",
-              description: "Un sistema visual evita improvisaciones.",
+              title: "Atrae a tu cliente ideal",
+              description: "Mostrás quién sos y conectás con personas que realmente valoran tu propuesta.",
             },
             {
               title: "Presencia digital coherente",
-              description: "Coherencia en redes, web y contenido.",
+              description: "Tu marca se ve alineada en redes, web y contenido, generando confianza real.",
             },
           ],
-          benefitsCta: "Quiero una marca clara y coherente",
-          painTitle: "Sin Branding Profesional… pasan estas cosas",
-          painIntro: "",
+          benefitsCta: "Quiero una identidad visual profesional",
+          painTitle: "Sin Branding Profesional… tu marca pierde oportunidades.",
+          painIntro: "Estos son los costos ocultos que pagás todos los días:",
           painPoints: [
-            "No te recuerdan",
-            "Tu mensaje se vuelve confuso",
-            "Tu marketing rinde menos",
-            "Todo lleva más tiempo",
-            "Parecés menos profesional",
-            "No podés escalar ordenadamente",
+            "No te recuerdan — Tu marca se pierde entre muchas y no lográs quedar en la mente de nadie.",
+            "Tu mensaje confunde — Las personas no entienden qué ofrecés ni por qué deberían elegirte.",
+            "Tus esfuerzos rinden menos — Invertís tiempo y dinero en contenido, marketing o publicidad sin retorno claro.",
+            "Transmitís poca profesionalidad — Generás menos confianza desde el primer vistazo.",
           ],
-          painConclusion: "Una identidad débil cuesta todos los días.",
-          painCta: "Quiero evitar estos problemas",
+          painNarrative: "Sin claridad visual, tu marca no comunica. Sin comunicación, no conecta. Y sin conexión, no vende.",
+          painConclusion: "Una identidad débil te frena. Una identidad clara y estratégica acelera tu crecimiento.",
+          painCta: "Quiero una identidad clara y profesional",
           includesTitle: "Qué Recibís",
           differentiatorsTitle: "Diferenciadores",
           differentiators: [
@@ -498,7 +614,7 @@ const dictionaries: Record<Locale, Dictionary> = {
           ctaNote: "Entrega 5–7 días + diseño + copy + optimización.",
           seoTitle: "Diseño Web Profesional & Rediseño Moderno | Cosmic Studio",
           seoDescription:
-            "Diseño web profesional y rediseño moderno para emprendedores y negocios. Webs claras, rápidas y confiables que generan confianza desde el primer vistazo.",
+            "Webs claras, rápidas y confiables que generan confianza desde el primer vistazo.",
           heroCta: "Quiero mi web profesional",
           benefitsTitle: "Beneficios de un Diseño Web Profesional",
           benefitsIntro: "¿Por qué tener una web profesional?",
@@ -840,7 +956,7 @@ const dictionaries: Record<Locale, Dictionary> = {
             "Optimización constante basada en datos y experimentos.",
             "Mensajes coherentes en landings, anuncios y redes.",
           ],
-          painTitle: "Puntos de Dolor: Lo que pasa sin una estrategia de marketing",
+          painTitle: "Lo que pasa sin una estrategia de marketing",
           painIntro: "",
           painPoints: [
             "Publicar sin objetivo → no genera resultados",
@@ -966,19 +1082,38 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     contact: {
       titleBeforeHighlight: "¿Listo para crear tu",
-      titleHighlight: "sistema?",
+      titleHighlight: "branding",
+      titleRotateOptions: ["branding?", "marketing?", "sistema?", "sitio web?", "ecommerce?"],
       titleAfterHighlight: "",
       description: "Conectemos y diseñemos experiencias digitales que evolucionan.",
       nameLabel: "TU NOMBRE / NEGOCIO",
       namePlaceholder: "Nombre o negocio",
       messageLabel: "MENSAJE",
-      defaultMessage: "Me interesa crear un sistema para mi negocio",
+      messagePlaceholder: "Escribe tu mensaje...",
+      interestLabel: "Me interesa",
+      interestHelper: "Selecciona uno o varios servicios",
+      interestPlaceholder: "Selecciona servicios",
+      interestOptions: [
+        { id: "branding-identidad-visual", label: "Branding e identidad visual" },
+        { id: "landing", label: "Diseño web y landing page" },
+        { id: "ecommerce-profesional", label: "Tiendas online premium" },
+        { id: "strategy", label: "Software a medida" },
+        { id: "marketing-digital", label: "Marketing digital" },
+      ],
+      interestIntro: "Hola. Quiero saber más sobre",
+      interestFallback: "los servicios de Cosmic Studio",
+      defaultMessage: "Hola. Quiero saber más sobre los servicios de Cosmic Studio.",
+      directMessageLabel: "Mensaje directo",
+      sendEmailLabel: "Enviar por correo",
+      sendWhatsappLabel: "Enviar por WhatsApp",
+      greetingPrefix: "Hola, soy",
+      nameFallback: "un potencial cliente",
+      emailSubject: "Nuevo mensaje desde Cosmic Studio",
       buttonLabel: "Contactar equipo",
       contactLine: "→ info.cosmicst@gmail.com",
       socials: [
         { label: "LinkedIn", href: "https://www.linkedin.com/company/cosmic-st/" },
-        { label: "Instagram", href: "#" },
-        { label: "Behance", href: "#" },
+        { label: "Instagram", href: "https://www.instagram.com/cosmicstudio.ig/" },
       ],
       footerNote: "© {year} Cosmic Studio. Todos los derechos reservados.",
       systemStatus: "Sistema activo",
@@ -986,12 +1121,12 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   en: {
     metadata: {
-      title: "Cosmic Studio — Bilingual digital experiences",
+      title: "Cosmic Studio | Creative studio & digital agency for branding, web design and systems",
       description:
-        "We work with entrepreneurs, stores, and distributors who want to leave spreadsheets and the chaos in WhatsApp behind.",
-      ogTitle: "Cosmic Studio — Digital experiences",
+        "Professional branding, web design, ecommerce, UX/UI design, digital marketing and custom web development. Bilingual studio crafting high-converting landing pages, digital products and growth systems.",
+      ogTitle: "Cosmic Studio — Branding, web design and digital systems",
       ogDescription:
-        "We work with entrepreneurs, stores, and distributors who want to leave spreadsheets and the chaos in WhatsApp behind.",
+        "Creative studio and digital agency. Branding, professional websites, ecommerce, digital marketing and custom software in EN/ES for brands ready to scale.",
     },
     languageSwitcher: {
       label: "Language",
@@ -1009,40 +1144,78 @@ const dictionaries: Record<Locale, Dictionary> = {
       contact: "Contact",
     },
     hero: {
-      title: "Digital systems that connect",
-      highlight: "strategy, design, and technology.",
-      description:
-        "We work with entrepreneurs, stores, and distributors who want to leave spreadsheets and the chaos in WhatsApp behind.",
+      title: "Strategy, design, and technology",
+      highlight: "to power your business.",
+      description: "Marketing, branding and web solutions in one universe.",
       cta: "Explore services",
     },
+    process: {
+      eyebrow: "HOW WE WORK",
+      title: "A clear path from start to finish",
+      steps: [
+        {
+          title: "Clear diagnosis",
+          description: "We analyze your brand, needs, and growth stage.",
+        },
+        {
+          title: "Strategic design",
+          description: "We craft visual and digital solutions with purpose, not templates.",
+        },
+        {
+          title: "Clean implementation",
+          description: "Design, development, and automation with smooth processes and clear communication.",
+        },
+        {
+          title: "Professional delivery",
+          description: "Complete deliverables, organized and ready to use.",
+        },
+        {
+          title: "Continuous evolution",
+          description: "We support you so your brand grows with order.",
+        },
+      ],
+      editorialAlt: "Abstract workflow illustration with light paths and clean geometric forms",
+    },
+    about: {
+      eyebrow: "WHO WE ARE",
+      title: "We are Cosmic Studio",
+      paragraphs: [
+        "A design and technology studio that blends strategy, clarity, and modern tools to build digital experiences that keep evolving.",
+        "We craft brands, websites, online stores, and tailored solutions with an editorial, functional, and organized approach.",
+        "Our process combines product thinking, clean design, and technology built to scale.",
+      ],
+      abstractAlt: "Photo of the Cosmic Studio team working in their studio",
+      studioAlt: "Photo of the Cosmic Studio workspace",
+      studioCaption: "An orderly studio for clear ideas.",
+    },
     manifesto: {
-      tagline: "Design that connects + systems that bring order",
-      headline:
-        "We digitize your processes so your business grows with order, clarity, and efficiency.",
-      description:
-        "We turn manual tasks into simple, visual systems that improve your operations. No more chaos or overworked people.",
-      idealForHeading: "Common scenarios",
-      idealForList: [],
-      idealForGroups: [
+      tagline: "We digitize your processes so your business grows with order, clarity, and efficiency.",
+      headline: "We digitize your operations so your business works better.",
+      subheadline:
+        "We turn your business steps into a simple, visual, efficient digital system that organizes operations and gives you back time.",
+      cards: [
         {
-          label: "Operational issues",
+          title: "Operational problems slowing your business",
           items: [
-            "Taking orders via WhatsApp or notebooks",
-            "Losing time on manual tasks",
-            "No control over inventory or expirations",
+            "Orders scattered across WhatsApp, Excel, or notebooks.",
+            "Repetitive tasks that eat up time.",
+            "No real control of stock and expirations."
           ],
         },
         {
-          label: "Management & decisions",
+          title: "Limited management and decisions without information",
           items: [
-            "Too much workload on the team",
-            "Need reliable information to decide",
+            "Excessive workload and feeling like you're putting out fires all day.",
+            "Incomplete or outdated information when it's time to decide.",
+            "Dependence on one person to keep everything running."
           ],
         },
         {
-          label: "Goals",
+          title: "Real business goals",
           items: [
-            "Want to grow with order and direction",
+            "Grow without burning out the team.",
+            "Have clear, centralized information in one system.",
+            "Make decisions with reliable data, not just intuition."
           ],
         },
       ],
@@ -1050,8 +1223,8 @@ const dictionaries: Record<Locale, Dictionary> = {
     services: {
       heading: "Services",
       description:
-        "We blend design, automation, and strategy so every digital touchpoint feels consistent, human, and ready to scale.",
-      scrollHint: "Scroll to explore each service in detail",
+        "Clear design, automated processes, and a strategy that keeps every interaction with your brand coherent.",
+      scrollHint: "",
       viewMore: "Learn more",
       keyBenefitLabel: "Ideal for",
       detailPage: {
@@ -1065,7 +1238,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         processTitle: "How we run it",
         deliverablesTitle: "Deliverables",
         audienceTitle: "Who it's for",
-        examplesTitle: "Example use cases",
+        examplesTitle: "Real examples",
         englishVersionTitle: "English version",
         instagramTitle: "IG short version",
         pitchTitle: "Quick pitch",
@@ -1075,12 +1248,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       },
       items: {
         "branding-identidad-visual": {
-          title: "Branding & Visual Identity",
-          headline: "We craft visual identities that clarify, connect, and elevate your brand.",
+          eyebrow: "Branding & Visual Identity",
+          title: "Professional Branding for Brands that Want to Grow",
+          headline:
+            "Visual identities that organize, differentiate, and elevate your brand.",
           description:
-            "Your brand needs more than a logo. We design complete, functional identities with strategy, narrative, palettes, typography, and a smart visual system so you look consistent and memorable from the first touch.",
+            "We design coherent, memorable visual systems that build trust from the first glance.",
           benefit:
-            "Entrepreneurs, local businesses, digital brands, and growing teams that need a clear, coherent identity ready to scale.",
+            "Entrepreneurs, businesses, and digital brands that need a clear, coherent, memorable visual identity.",
+          estimatedTime: "Estimated delivery: 15–25 days depending on the plan",
+          startingPrice: "Investment from USD 280",
           imageSrc: "/Servicios/AURO.PNG",
           imageSide: "right",
           features: [
@@ -1108,22 +1285,26 @@ const dictionaries: Record<Locale, Dictionary> = {
           imageAlt: "Clean brandboard with logo, palette, and typography by Cosmic Studio",
         },
         landing: {
-          title: "Professional Website & Redesign",
+          eyebrow: "Professional Web Design",
+          title: "We create clear, fast, trustworthy websites that boost your digital presence.",
           description:
-            "We build modern, clear, trustworthy sites that elevate your digital presence. Launching your first site? We connect your idea to the world. If your current site feels dated or slow, we refresh it with smart design and a clear experience that builds trust at first glance.",
-          estimatedTime: "Estimated delivery: 5–7 days.",
-          startingPrice: "Investment from USD 120.",
+            "We build clear, fast, reliable websites that represent your brand with precision. If your site feels old or slow, we refresh it with smart, strategic design.",
+          estimatedTime: "Estimated delivery: 5–7 days",
+          startingPrice: "Investment from USD 120",
           benefit:
-            "Entrepreneurs, professionals, local businesses, and digital brands that need their first site or a redesign to update the look, improve UX, and communicate with clarity.",
+            "Entrepreneurs, local businesses, and digital brands that need a professional, clear site ready to grow.",
           ctaLabel: "View Web service",
           imageAlt: "Example of professional web design and modern redesign by Cosmic Studio",
           imageSrc: "/Serviciosweb.jpg",
           imageSide: "left",
         },
         "ecommerce-profesional": {
-          title: "Professional Ecommerce & Custom Stores",
+          eyebrow: "Professional Ecommerce",
+          title: "We build fast, clear online stores optimized to sell more.",
           description:
-            "We create fast, clear, conversion-first online stores. Custom design aligned with your brand, no templates, optimized for sales with payments, shipping, and inventory integrated.",
+            "Custom designs—no generic templates—with a modern experience aligned to your brand. Fast, clear, optimized to sell more, with payments, shipping, and inventory integrated.",
+          estimatedTime: "Estimated delivery: 15–30 days depending on features",
+          startingPrice: "Investment from USD 300",
           benefit:
             "Entrepreneurs, physical shops, and growing brands that need a reliable, scalable store to sell more with a modern experience.",
           ctaLabel: "View Ecommerce service",
@@ -1132,24 +1313,28 @@ const dictionaries: Record<Locale, Dictionary> = {
           imageSide: "right",
         },
         "marketing-digital": {
-          title: "Digital Marketing & Growth Strategy",
+          eyebrow: "Digital Marketing",
+          title: "Make your brand grow.",
           description:
             "Presence alone isn’t enough—you need a clear, measurable strategy. We build marketing plans that blend professional content, persuasive copy, paid campaigns, segmentation, analytics, and continuous optimization.",
+          estimatedTime: "Estimated delivery: 7–10 days for the initial strategy.",
+          startingPrice: "Investment from USD 120.",
           benefit:
-            "Entrepreneurs, personal brands, digital businesses, and projects seeking serious, measurable marketing designed to grow with intention.",
+            "Brands with branding/web/ecommerce, ventures, and businesses that want to grow with real strategy and decisions based on data.",
           ctaLabel: "View Marketing service",
           imageSrc: "/pew.png",
           imageAlt: "Professional digital marketing strategy",
-          imageSide: "right",
+          imageSide: "left",
         },
         strategy: {
-          title: "Custom Systems & Business Software",
+          eyebrow: "Custom Software",
+          title: "One system. Your entire business running.",
           description:
-            "One system for your entire operation. We build custom software that connects sales, inventory, logistics, suppliers, customers, tasks, and reports in one place with clarity and automation.",
-          estimatedTime: "Estimated delivery: 30–60 days.",
-          startingPrice: "Investment from USD 2,000.",
+            "Custom software that integrates sales, inventory, logistics, suppliers, customers, tasks, reports, and automations in one place.",
+          estimatedTime: "Estimated delivery: 30–60 days",
+          startingPrice: "Investment from USD 350",
           benefit:
-            "Growing businesses, operations teams, shops, distributors, and brands that need a tailored management system to organize, automate, and scale.",
+            "Businesses, shops, distributors, and operations teams that need order, visibility, and real automation to scale without chaos.",
           ctaLabel: "View Systems service",
           imageSrc: "/gestock.png",
           imageAlt: "Custom business software system",
@@ -1158,245 +1343,585 @@ const dictionaries: Record<Locale, Dictionary> = {
       },
       details: {
         "branding-identidad-visual": {
-          eyebrow: "Visual identity that clarifies and elevates",
+          eyebrow: "Professional Branding & Visual Identity",
           intro:
-            "We build complete, functional visual identities that organize, communicate, and elevate your brand. Strategy, narrative, palette, typography, and a coherent visual system so you stand out from the first impression.",
+            "We create professional visual identities that organize, communicate, and differentiate your brand from the first second.",
           outcomes: [
-            "Coherent identity that conveys your real value across every channel.",
-            "Integral visual system: logo, palette, typography, and usage rules ready to go.",
-            "Clear narrative and voice to attract the right audience.",
-            "Applied examples: brandboard and mockups for social, web, and materials.",
-            "Flexible foundation to grow with campaigns, products, or new lines.",
+            "Your brand stops looking like everyone else and becomes memorable.",
+            "Clear communication: your value is understood in seconds.",
+            "Narrative and style aligned to your purpose to attract the ideal client.",
+            "Less improvisation: you save time with a defined visual system.",
+            "Professional, coherent presence across every channel.",
           ],
           steps: [
             {
-              title: "Discovery and purpose",
-              description: "We review your business, audience, and goals to define the brand essence.",
+              title: "Discovery → essence and vision",
+              description: "We gather purpose, goals, and desired style.",
             },
             {
-              title: "Narrative and messaging",
-              description: "Voice, tone, communication pillars, and value proposition to truly connect.",
+              title: "Design → proposals + refinements",
+              description: "We develop visual options and refine with feedback.",
             },
             {
-              title: "Complete visual system",
-              description: "Logo, palette, typography, visual styles, and base components.",
-            },
-            {
-              title: "Guide and applications",
-              description: "Brandboard or mini style guide with rules, examples, and ready-to-use assets.",
-            },
-            {
-              title: "Delivery and support",
-              description: "Optimized files (web/print) plus a quick walkthrough to use them confidently.",
+              title: "Final delivery → ready-to-use files",
+              description: "We hand off the full system prepared for social, web, and presentations.",
             },
           ],
           deliverables: [
-            "Brand strategy and narrative (purpose, voice, and core message).",
-            "Primary logo + variants ready for print and digital.",
-            "Color palette with recommended usage.",
-            "Typography system with hierarchies and styles.",
-            "Base visual library: patterns, icons, or support assets as needed.",
-            "Brandboard / mini style guide with rules and applied examples.",
-            "Mockups for social or web + organized master files.",
+            "Primary logo + variations",
+            "Professional palette",
+            "Selected typography",
+            "Complete visual system",
+            "Brand narrative",
+            "Usage guide",
+            "Ready applications (social, web, presentations)",
           ],
-          audience: [
-            "Entrepreneurs launching or relaunching with a stronger identity.",
-            "Local businesses wanting a more professional, trustworthy presence.",
-            "Digital brands that need consistency across social, web, and content.",
-            "Growing projects that require a scalable visual system.",
-            "Teams or freelancers seeking an identity that signals trust.",
-          ],
-          ctaNote: "Includes strategy, narrative, full visual system, and applied mockups ready to use.",
-          whatsappMessage: "Hi! I'm interested in the branding and visual identity service ✨",
+          ctaNote: "Professional, coherent branding ready to use.",
+          whatsappMessage: "Hi, I want my professional identity with Cosmic Studio ✨",
           pitch:
-            "We design professional visual identities that clarify, communicate, and elevate your brand. Strategy, narrative, a full visual system, and applied examples so you launch with coherence from day one.",
-          seoTitle: "Branding & Visual Identity | Cosmic Studio",
+            "Professional branding for brands that want to grow. Clear, coherent visual identity ready to use across every channel.",
+          seoTitle: "Professional Branding & Visual Identity | Cosmic Studio",
           seoDescription:
-            "We design professional visual identities that clarify, communicate, and elevate your brand. Complete branding for entrepreneurs, businesses, and digital brands.",
+            "Professional branding for entrepreneurs and businesses. We design clear, coherent, memorable visual identities that elevate your digital presence and build trust.",
+          heroCta: "I want my professional identity",
+          benefitsTitle: "Benefits of Professional Branding",
+          benefitsIntro: "Why choose professional branding?",
+          benefitsNarrative: "A solid identity organizes your brand, communicates better, and fuels growth.",
+          benefits: [
+            {
+              title: "Immediate differentiation",
+              description: "Your brand stops blending in and becomes recognizable at a glance.",
+            },
+            {
+              title: "Clear communication",
+              description: "Your message is understood without extra explanations: you convey value with clarity.",
+            },
+            {
+              title: "Attract your ideal client",
+              description: "You show who you are and connect with the people who truly value your offer.",
+            },
+            {
+              title: "Coherent digital presence",
+              description: "Aligned across social, web, and content so you project trust everywhere.",
+            },
+          ],
+          benefitsCta: "I want a professional visual identity",
+          painTitle: "Without professional branding… your brand loses opportunities.",
+          painIntro: "These are the hidden costs you pay every day:",
+          painPoints: [
+            "They don't remember you — your brand gets lost among many and doesn't stay top of mind.",
+            "Your message confuses — people don't understand what you offer or why they should choose you.",
+            "Your efforts perform worse — you invest time and money in content, marketing, or ads without clear return.",
+            "You convey less professionalism — you generate less trust from the first glance.",
+          ],
+          painNarrative:
+            "Without visual clarity, your brand doesn't communicate. Without communication, it doesn't connect. And without connection, it doesn't sell.",
+          painConclusion: "A weak identity slows you down. A clear, strategic identity accelerates your growth.",
+          painCta: "I want a clear, professional identity",
+          includesTitle: "What You Receive",
+          differentiatorsTitle: "Differentiators",
+          differentiators: [
+            "Strategy + aesthetics in balance",
+            "Functional design (less visual chaos)",
+            "Clear, guided process",
+            "Identity ready to scale",
+            "Coherence that signals trust",
+          ],
+          processTitle: "Simple process",
+          plansTitle: "Plans",
+          plans: [
+            { name: "Essential — Core identity", description: "Base identity with the essentials to launch." },
+            {
+              name: "Professional (Recommended)",
+              description: "Complete system ready to communicate.",
+              badge: "Recommended",
+            },
+            {
+              name: "Expansion — Complete",
+              description: "Extra pieces + additional applications.",
+            },
+          ],
+          planCta: "Choose my plan",
+          faqTitle: "FAQ",
+          faqs: [
+            { question: "How long does it take?", answer: "10–20 days depending on the plan." },
+            { question: "Does it include revisions?", answer: "Yes, we review and adjust at each stage." },
+            { question: "Do I get editable files?", answer: "Yes, ready for social, print, and web." },
+            { question: "Do I need to bring anything?", answer: "Just complete the initial form." },
+          ],
+          processCta: "See examples and start",
+          finalCtaTitle: "Your brand deserves a clear, professional identity.",
+          finalCtaSubtitle: "Ready to grow with coherence across every channel.",
+          finalCta: "I want my professional identity",
+          internalLinks: [
+            { label: "See Web service", href: "/services/landing" },
+            { label: "See portfolio", href: "#projects" },
+            { label: "See Marketing service", href: "/services/marketing-digital" },
+          ],
+          schema: {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: "Professional Branding",
+            provider: {
+              "@type": "Organization",
+              name: "Cosmic Studio",
+              url: "https://cosmicst.dev",
+            },
+            description:
+              "Professional branding and visual identity service for entrepreneurs, businesses, and digital brands. Clear, coherent, memorable designs.",
+            areaServed: "Argentina, Latin America, United States",
+            serviceType: "Professional Branding",
+          },
         },
         landing: {
-          eyebrow: "Conversion-first landing",
+          eyebrow: "Professional Web & Web Redesign",
           intro:
-            "We build modern, clear, trustworthy websites that elevate your digital presence. First site? We help you launch. Existing site that feels old or slow? We redesign it with smart UX and a modern aesthetic so it inspires trust from the first click.",
-          whatsappMessage: "Hi! I want a landing page ready for ads 🚀",
-          ctaNote: "Delivered in 3–7 days. Design + copy + deploy included.",
-          seoTitle: "Professional Web Design & Redesign | Cosmic Studio",
+            "We create clear, fast, trustworthy websites that boost your digital presence. Launching your first site? We connect your idea with the world. If your site feels old or slow, we refresh it with smart design and a clear experience from the first glance.",
+          whatsappMessage: "Hi, I want my professional website 🚀",
+          ctaNote: "Delivery 5–7 days + design + copy + optimization.",
+          seoTitle: "Professional Web Design & Modern Redesign | Cosmic Studio",
           seoDescription:
-            "Professional web design and modern redesign for entrepreneurs, businesses, and digital brands. Clear, fast, trustworthy sites that inspire confidence from the first glance.",
+            "Professional web design and modern redesign for entrepreneurs and businesses. Clear, fast, trustworthy sites that inspire confidence from the first glance.",
+          heroCta: "I want my professional website",
+          benefitsTitle: "Benefits of a Professional Website",
+          benefitsIntro: "Why have a professional website?",
+          benefits: [
+            { title: "Fast and optimized site", description: "Better performance, experience, and positioning." },
+            { title: "Clear communication", description: "Your message lands in seconds, without distractions." },
+            { title: "Modern, trustworthy design", description: "Professionalism from the first impression." },
+            { title: "100% mobile-ready", description: "Looks perfect on any device." },
+            { title: "Structure ready to grow", description: "Ideal for businesses that want to scale." },
+          ],
+          benefitsCta: "I want a clear, professional website",
           outcomes: [
-            "Convert more: persuasive copy + proven structure.",
-            "Premium look: same quality as top-tier brands.",
-            "100% mobile-first (most traffic is on phones).",
-            "Optimized for Meta Ads and Google Ads.",
-            "Stand out: stop relying only on IG or WhatsApp.",
+            "Your offer stays clear and organized from the first scroll.",
+            "Fast site that inspires trust and improves conversions.",
+            "Optimized mobile version to capture clients from any channel.",
+            "Base ready for campaigns, SEO, and scaling without rebuilding the site.",
           ],
-          steps: [
-            { title: "15-min brief", description: "Fill a quick form or do it over WhatsApp." },
-            { title: "Copy + Design", description: "Day 2–4: we show you the first version." },
-            { title: "Review + Deploy", description: "Day 5–7: tweaks and publish on your domain." },
+          painTitle: "Pain points: What happens when you DON’T have a professional website",
+          painIntro: "",
+          painPoints: [
+            "Your site loads slowly → you lose visits",
+            "The design looks outdated → trust drops",
+            "What you offer isn’t clear → fewer sales",
+            "Not responsive → bad experience on mobile",
+            "Hard to update → you depend on others",
+            "Marketing without a solid site → weak results",
           ],
+          painConclusion: "An outdated site costs you clients every day.",
+          painCta: "I want to avoid these problems",
+          includesTitle: "What Your Professional Web Design Includes",
           deliverables: [
-            "Premium, clean, modern design",
-            "Persuasive copy (problem → solution → proof)",
-            "WhatsApp / Email / Calendly / Pixel / GA4 integration",
-            "Fast load + basic SEO",
-            "Hosting on Vercel + domain setup",
-            "Royalty-free licensed assets",
+            "Modern, custom design",
+            "Clear structure to communicate your offer",
+            "Intuitive navigation (UX)",
+            "Optimized copy",
+            "Desktop + mobile versions",
+            "Integration with social / WhatsApp / forms",
+            "Speed optimization + basic SEO",
+            "Training so you can update your site",
           ],
+          processTitle: "Our Simple Process",
+          steps: [
+            { title: "Discovery", description: "We understand your business, goal, and style." },
+            { title: "Design", description: "We assemble structure + UI + content." },
+            { title: "Development & Delivery", description: "Site ready, fast, optimized, and easy to use." },
+          ],
+          processCta: "See website examples",
           audience: [
-            "Entrepreneurs who need to capture clients fast",
-            "Small shops needing a professional place to send traffic",
-            "Personal brands or local services (gyms, studios, coaches)",
-            "Freelancers wanting a professional online image",
+            "Entrepreneurs who need their first professional website",
+            "Local businesses that want to look trustworthy",
+            "Digital brands seeking better experience and clarity",
+            "Projects needing a redesign to refresh image and performance",
           ],
-          examples: [
-            { title: "Aura – Health shop", description: "Catalog + WhatsApp + benefits. ↑42% sales" },
-            { title: "Cucu – Food delivery", description: "Orders landing + store buttons. ↑3× leads" },
-            { title: "BV Aesthetics – Local service", description: "Calendly integrated. –32% cost per lead" },
-            { title: "Coach Dana – Personal brand", description: "Services + testimonials. ↑58% bookings" },
+          internalLinks: [
+            { label: "See Branding service", href: "/services/branding-identidad-visual" },
+            { label: "See Marketing service", href: "/services/marketing-digital" },
+            { label: "See Portfolio", href: "#projects" },
           ],
-          englishVersion: {
-            title: "Landing Page Optimized for Conversion",
-            intro: "High-converting pages designed to turn visitors into customers. Perfect for entrepreneurs, small businesses, and brands running ads or sending traffic from social media.",
-            bullets: [
-              "Premium design, clean & professional",
-              "Persuasive copy that sells",
-              "Mobile-first, ads-ready (Meta + Google)",
-              "3–7 day turnaround",
-            ],
+          differentiatorsTitle: "Differentiators",
+          differentiators: [
+            "Clean, modern, conversion-focused design",
+            "Experience and clarity as a priority",
+            "Fast, SEO-friendly, stable sites",
+            "Guided, low-stress process",
+            "Delivery in days, not weeks",
+          ],
+          plansTitle: "Plans",
+          plans: [
+            { name: "Web Starter", description: "Ideal for a first website." },
+            {
+              name: "Web Professional (Recommended)",
+              description: "Design + strategy + optimization.",
+              badge: "Recommended",
+            },
+            { name: "Web Total Redesign", description: "Full refresh + UX/UI improvements." },
+          ],
+          planCta: "Choose my plan",
+          faqTitle: "FAQ",
+          faqs: [
+            { question: "Is the site self-manageable?", answer: "Yes, you'll be able to update it easily." },
+            { question: "Does it include SEO?", answer: "Includes basic SEO + technical optimization." },
+            { question: "What is it built on?", answer: "On fast, flexible platforms." },
+            { question: "Can I scale later?", answer: "Yes, your site will be ready to grow." },
+          ],
+          finalCtaTitle: "Your website is your introduction. Let's make one that inspires trust and delivers results.",
+          finalCta: "I want my professional website",
+          schema: {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: "Professional Web Design",
+            provider: {
+              "@type": "Organization",
+              name: "Cosmic Studio",
+              url: "https://cosmicst.dev",
+            },
+            description:
+              "Professional web design and modern redesign for entrepreneurs and businesses. Clear, fast, trustworthy sites ready to grow.",
+            areaServed: "Argentina, Latin America, United States",
+            serviceType: "Professional Web Design",
           },
-          instagramSlides: [
-            { title: "Slide 1", bullets: ["✨ Professional Landing Page", "(built to convert)"] },
-            { title: "Slide 2", bullets: ["✔ Premium design", "✔ Copy that sells", "✔ Ready in 3–7 days"] },
-            { title: "Slide 3", bullets: ["🔌 Integrations", "WhatsApp · Calendly · Pixel · GA4"] },
-            { title: "Slide 4", bullets: ["🔥 Ideal for", "Entrepreneurs · Shops · Brands · Local services"] },
-            { title: "Slide 5", bullets: ["📩 DM me to start your landing"] },
-          ],
-          pitch: "We build professional landing pages designed to convert customers. If you're sending traffic from Instagram or ads, you need a page that explains who you are, what you do, and why they should buy. Delivered in under a week. DM me.",
         },
         "ecommerce-profesional": {
-          eyebrow: "Ecommerce built to sell",
+          eyebrow: "Professional Ecommerce & Custom Online Stores",
           intro:
-            "We craft fast, clear, conversion-focused online stores. Modern experience, no generic templates, aligned to your brand and ready to scale.",
+            "We create fast, clear, conversion-optimized online stores. Modern, scalable experiences aligned to your brand, without generic templates.",
           whatsappMessage: "Hi, I need a professional ecommerce optimized to sell",
-          ctaNote: "Includes UX/UI, payments/shipping integrations, inventory and a clean backend.",
+          ctaNote: "Includes custom design, UX, integrations, and optimization.",
           seoTitle: "Professional Ecommerce & Custom Online Stores | Cosmic Studio",
           seoDescription:
-            "Professional ecommerce and custom online stores for entrepreneurs and brands. Fast, clear, conversion-optimized design with payments, shipping, and inventory integrated.",
+            "Professional ecommerce and custom online stores for entrepreneurs and businesses. Fast, clear, conversion-optimized stores with payments, shipping, and inventory integrated.",
+          heroCta: "I want my professional ecommerce",
+          benefitsTitle: "Benefits of a Professional Ecommerce",
+          benefitsIntro: "Why does a professional ecommerce sell more?",
+          benefits: [
+            { title: "Optimized to convert", description: "Smart design that guides the customer to purchase." },
+            { title: "Fast and reliable", description: "Speed = less abandonment and more sales." },
+            {
+              title: "100% custom and aligned to your brand",
+              description: "No templates. Your store feels unique and professional.",
+            },
+            {
+              title: "Integrated with everything you need",
+              description: "Payments, shipping, inventory, automations, emails, CRM.",
+            },
+            { title: "Simple, scalable operation", description: "Organized backend to grow without friction." },
+          ],
+          benefitsCta: "I want a store that sells more",
           outcomes: [
-            "Clear, fast buying experience that lifts conversions.",
-            "Custom design aligned to your brand (no generic templates).",
-            "Payments, shipping, and inventory integrated to run smoothly.",
-            "Organized backend to scale catalog and orders.",
-            "Automations for notifications and order status updates.",
+            "Clear buying experience that increases conversion.",
+            "Optimized checkout with payments and shipping integrated.",
+            "Organized operation: inventory, orders, and automations in one flow.",
+            "Tech base ready for campaigns, remarketing, and scaling.",
           ],
-          steps: [
-            { title: "Discovery and strategy", description: "Catalog, tickets, shipping model, and conversion goals." },
-            { title: "UX/UI and architecture", description: "Clear purchase flows, intuitive nav, and consistent branding." },
-            { title: "Integrations and QA", description: "Payments, shipping, inventory, and automations tested pre-launch." },
-            { title: "Launch and support", description: "Performance checklist and quick training for your team." },
+          painTitle: "Pain points: What happens when you DON’T have a professional ecommerce",
+          painIntro: "",
+          painPoints: [
+            "Customers abandon because the store is slow.",
+            "The design doesn’t inspire trust → fewer sales.",
+            "Buying feels complicated → bad experience.",
+            "You can’t integrate payments or shipping correctly.",
+            "Inventory and orders turn into chaos.",
+            "Marketing loses impact without a solid store.",
           ],
+          painConclusion: "A weak ecommerce doesn’t sell and makes you lose opportunities every day.",
+          painCta: "I want to avoid these problems",
+          includesTitle: "What Your Professional Ecommerce Includes",
           deliverables: [
-            "Full UX/UI design (home, categories, PDP, checkout)",
+            "100% custom design",
+            "Clear architecture focused on conversion",
+            "Optimized product pages",
+            "Intuitive cart + checkout",
             "Payments and shipping integration",
-            "Inventory management + basic order panel",
-            "Key automations (confirmations, statuses, alerts)",
-            "Mobile optimization and basic on-page SEO",
-            "Short usage guide + asset handoff",
+            "Inventory and order management",
+            "Automations (emails, statuses, alerts)",
+            "Easy-to-use dashboard",
+            "Basic SEO + optimized speed",
+            "Training so you can operate it",
           ],
+          processTitle: "Our Process",
+          steps: [
+            { title: "Discovery", description: "Business, products, needs, and style." },
+            { title: "Architecture", description: "Structure, routes, categories, UX." },
+            { title: "Design", description: "Clear, modern UI aligned to your brand." },
+            { title: "Development", description: "Features, integrations, and checkout." },
+            { title: "Delivery", description: "Store ready to sell + usage tutorial." },
+          ],
+          processCta: "See online store examples",
           audience: [
-            "Entrepreneurs launching their first store",
-            "Physical shops moving to online sales",
-            "Growing brands that need to scale catalog and conversions",
-            "Projects needing a store aligned with their identity",
+            "Entrepreneurs who want to start selling online",
+            "Physical shops looking to go digital",
+            "Growing brands that need a solid store",
+            "Projects that outgrew basic platforms (e.g., Tiendanube)",
+            "Teams needing more control, design, and scalability",
           ],
-          examples: [],
-          instagramSlides: [],
-          pitch:
-            "We build fast, clear, conversion-optimized ecommerce. No templates: custom design, integrated payments/shipping, and an experience that reflects your brand.",
+          internalLinks: [
+            { label: "See Web service", href: "/services/landing" },
+            { label: "See Branding service", href: "/services/branding-identidad-visual" },
+            { label: "See Marketing", href: "/services/marketing-digital" },
+          ],
+          differentiatorsTitle: "Differentiators",
+          differentiators: [
+            "Fast, secure, optimized stores",
+            "Intuitive checkout that lifts conversions",
+            "Real integrations (no patches or workarounds)",
+            "Professional design aligned to your identity",
+            "Guaranteed scalability to grow without limits",
+          ],
+          plansTitle: "Plans",
+          plans: [
+            { name: "Ecommerce Starter", description: "Optimized base to start selling." },
+            {
+              name: "Professional Ecommerce (Recommended)",
+              description: "Design + integrations + automations.",
+              badge: "Recommended",
+            },
+            {
+              name: "Ecommerce Scale",
+              description: "More features, customizations, and growth support.",
+            },
+          ],
+          planCta: "Choose this plan",
+          faqTitle: "FAQ",
+          faqs: [
+            {
+              question: "Does it include payment and shipping integrations?",
+              answer: "Yes, we configure payments and shipping ready to use.",
+            },
+            { question: "Can I manage inventory and orders?", answer: "Yes, with a simple, organized dashboard." },
+            { question: "Is it scalable?", answer: "Yes, we prepare it to grow in catalog and traffic." },
+            { question: "Does it include SEO?", answer: "Includes basic SEO and speed optimization." },
+          ],
+          finalCtaTitle:
+            "Your online store is your business open 24/7. Let's make it sell more, better, and with less friction.",
+          finalCta: "I want my professional ecommerce",
+          schema: {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: "Professional Ecommerce",
+            provider: {
+              "@type": "Organization",
+              name: "Cosmic Studio",
+              url: "https://cosmicst.dev",
+            },
+            description:
+              "Professional ecommerce and custom online stores for entrepreneurs and businesses. Fast, clear, conversion-ready stores with payments, shipping, and inventory integrated.",
+            areaServed: "Argentina, Latin America, United States",
+            serviceType: "Professional Ecommerce",
+          },
         },
         strategy: {
-          eyebrow: "Custom system that connects everything",
+          eyebrow: "Custom Software & Tailored Systems",
           intro:
-            "One system for your whole business. We design tailored software that connects sales, inventory, logistics, suppliers, customers, tasks, and reports in one place with clarity and automation.",
-          whatsappMessage: "Hi, I need a custom system for my business",
-          ctaNote: "Includes UX/UI, development, integrations, and key automations.",
-          seoTitle: "Custom Systems and Business Software | Cosmic Studio",
+            "One system. Your entire business running. We integrate sales, inventory, logistics, suppliers, customers, tasks, reports, and automations in one place.",
+          whatsappMessage: "Hi, I need my custom system 🚀",
+          ctaNote: "Includes architecture, UX/UI, development, integrations, and automations.",
+          seoTitle: "Custom Software and Tailored Systems | Cosmic Studio",
           seoDescription:
-            "Custom systems and business software that connect sales, inventory, logistics, and customers in one place. Operate with clarity, automation, and real scalability.",
+            "Custom software and tailored systems that integrate sales, inventory, logistics, suppliers, and customers. Order, automation, and control to scale without chaos.",
+          heroCta: "I want my custom system",
+          benefitsTitle: "Benefits of Custom Software",
+          benefitsIntro: "Why does a proprietary system organize and scale your business?",
+          benefits: [
+            { title: "Everything centralized in one place", description: "Avoid using 10 different tools for simple tasks." },
+            {
+              title: "Total control of your operation",
+              description: "Clear reports, organized data, and smarter decisions.",
+            },
+            {
+              title: "Time savings on repetitive tasks",
+              description: "We automate processes so your team works better.",
+            },
+            {
+              title: "Real integration with sales, inventory, and logistics",
+              description: "Nothing is left out. Everything connects.",
+            },
+            { title: "Ready to scale", description: "Grows with your business without relying on generic solutions." },
+          ],
+          benefitsCta: "I want a system that organizes my operation",
           outcomes: [
-            "Unified operation in a single system—no spreadsheets or patchwork.",
-            "Automated processes to cut errors and idle time.",
-            "Real-time visibility over sales, stock, orders, and logistics.",
-            "Clear interfaces so your team adopts the system fast.",
-            "Architecture ready to scale modules and users.",
+            "Centralized operation with reliable data in a single system.",
+            "Automations that remove manual tasks and reduce errors.",
+            "Complete integration between sales, stock, logistics, and finance.",
+            "Real-time visibility to decide and scale without chaos.",
           ],
-          steps: [
-            { title: "Discovery and blueprint", description: "We map real processes, roles, metrics, and bottlenecks." },
-            { title: "UX/UI and architecture", description: "Flows, screens, and business rules focused on clarity first." },
-            { title: "Build and integrations", description: "We develop the system and connect payments, inventory, ERPs/APIs as needed." },
-            { title: "QA and deploy", description: "End-to-end tests, performance checklist, and production rollout." },
-            { title: "Adoption and support", description: "Quick training, documentation, and initial support." },
+          painTitle: "Pain points: What happens when you DON’T have your own system",
+          painIntro: "",
+          painPoints: [
+            "Using Excel, WhatsApp, and scattered apps → guaranteed chaos",
+            "Disorganized information → costly errors",
+            "Poorly managed inventory → losses or stockouts",
+            "Manual processes → your team loses hours every day",
+            "No visibility → you don't know what works and what doesn't",
+            "Generic systems that don’t fit your business",
           ],
+          painConclusion: "A business without its own system grows until chaos stops it.",
+          painCta: "I want to avoid these problems",
+          includesTitle: "What Your Custom System Includes",
           deliverables: [
-            "Full UX/UI design for the system",
-            "Production-ready backend and frontend with roles and permissions",
-            "Integrations (payments, inventory, ERPs/APIs required)",
-            "Key automations and notifications",
-            "Basic monitoring and activity logs",
-            "Short documentation and technical handoff",
+            "Architecture design based on your real operation",
+            "Sales, suppliers, customers, and logistics modules",
+            "Inventory control and stock alerts",
+            "Tasks, tickets, and automations",
+            "Payment status, invoices, and receipts",
+            "Smart reports",
+            "Roles and permissions for your team",
+            "Fast, secure, scalable web app",
+            "Training for internal use",
           ],
+          processTitle: "Our Process",
+          steps: [
+            { title: "Diagnosis", description: "We analyze operation, flows, and needs." },
+            { title: "System architecture", description: "Modules, logic, and automations." },
+            { title: "UX/UI design", description: "Clear, fast, easy-to-use interfaces." },
+            { title: "Development", description: "Features, integrations, and testing." },
+            { title: "Implementation and training", description: "System running from day one." },
+          ],
+          processCta: "See system examples",
           audience: [
-            "Growing businesses leaving spreadsheets and consolidating operations",
-            "Operations teams needing traceability and control",
-            "Shops and distributors managing catalog, orders, and logistics",
-            "Brands wanting to scale with a custom, proprietary system",
+            "Growing businesses",
+            "Physical stores or ecommerce",
+            "Distributors and wholesalers",
+            "Operations teams with high task volume",
+            "Companies seeking order, control, and real automation",
+            "Businesses that outgrew generic solutions like Excel or basic apps",
           ],
-          examples: [],
-          instagramSlides: [],
-          pitch:
-            "We design and build custom systems that connect sales, inventory, logistics, and customers in one place. Less friction, more control, and real scalability.",
+          internalLinks: [
+            { label: "See Web service", href: "/services/landing" },
+            { label: "See Ecommerce service", href: "/services/ecommerce-profesional" },
+            { label: "See Portfolio", href: "#projects" },
+          ],
+          differentiatorsTitle: "Differentiators",
+          differentiators: [
+            "System built 100% tailored",
+            "Designed for your real operation, not a standard template",
+            "Complete integration between modules and areas",
+            "Clear, modern, easy-to-use interface",
+            "Guaranteed scalability (grows with your business)",
+            "Guided process and support",
+          ],
+          planCta: "I want my custom system",
+          finalCtaTitle: "Your business deserves a system that organizes, automates, and lets you grow without chaos.",
+          finalCtaSubtitle: "Professional, robust software fully aligned to your needs.",
+          finalCta: "I want my custom system",
+          schema: {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: "Custom Software",
+            provider: {
+              "@type": "Organization",
+              name: "Cosmic Studio",
+              url: "https://cosmicst.dev",
+            },
+            description:
+              "Custom software and tailored systems that integrate sales, inventory, logistics, suppliers, customers, and automations to organize and scale your operation.",
+            areaServed: "Argentina, Latin America, United States",
+            serviceType: "Custom Software",
+          },
         },
         "marketing-digital": {
-          eyebrow: "Marketing that grows with data",
+          eyebrow: "Strategic Digital Marketing",
           intro:
-            "Growing a brand takes more than presence—you need a clear, measurable strategy. We create marketing plans that blend professional content, persuasive copy, paid campaigns, segmentation, analytics, and continuous optimization.",
-          whatsappMessage: "Hi, I need a digital marketing strategy that grows with data",
-          ctaNote: "Includes strategy, content, paid media, analytics, and optimization.",
-          seoTitle: "Digital Marketing and Growth Strategy | Cosmic Studio",
+            "Having digital presence isn’t enough: you need a clear, coherent, measurable strategy that connects with the right audience. We create marketing plans that integrate professional content, paid campaigns, segmentation, persuasive copywriting, analytics, and continuous optimization. We don’t just “do social”: we build real growth with strategy, creativity, and data.",
+          whatsappMessage: "Hi, I want my marketing strategy ✨",
+          ctaNote: "Strategy, creativity, and data aligned to grow with intention.",
+          seoTitle: "Strategic Digital Marketing | Cosmic Studio",
           seoDescription:
-            "Digital marketing and growth strategy for entrepreneurs and brands. Paid campaigns, content, segmentation, and continuous optimization to scale with clarity and data.",
+            "Strategic Digital Marketing for brands that want to grow with intention. Clear strategy, professional content, paid campaigns, and continuous optimization.",
+          heroCta: "See Marketing service",
+          benefitsTitle: "Benefits of Strategic Digital Marketing",
+          benefitsIntro: "Why a clear, measurable strategy?",
+          benefits: [
+            {
+              title: "Clear, personalized strategy",
+              description: "Objectives, audience, message, and positioning aligned to grow with intention.",
+            },
+            {
+              title: "Professional content and campaigns",
+              description: "Creativity + execution: ads, social, landings, copywriting, and visual assets.",
+            },
+            {
+              title: "Measurement, analysis, and continuous optimization",
+              description: "You make decisions with real data, not intuition.",
+            },
+          ],
+          benefitsCta: "I want a strategy that works",
           outcomes: [
-            "Marketing plan aligned with your brand and goals.",
-            "Paid media optimized for performance and continuous learning.",
-            "Content and copy that resonate with the right audience.",
-            "Tracking, dashboards, and analytics for data-driven decisions.",
-            "Ongoing iteration to scale what works and adjust fast.",
+            "Marketing roadmap aligned to objectives and clear metrics.",
+            "Content and campaigns that connect with the right audience.",
+            "Constant optimization based on data and experiments.",
+            "Coherent messages across landings, ads, and social.",
           ],
-          steps: [
-            { title: "Diagnosis and objectives", description: "Review assets, audiences, and set clear, measurable goals." },
-            { title: "Strategy and plan", description: "Channel mix, content, paid media, segments, and priority messages." },
-            { title: "Execution and tracking", description: "Creatives, copy, campaign setup, and measurement." },
-            { title: "Continuous optimization", description: "AB testing, segmentation tweaks, budgets, and messaging." },
-            { title: "Reporting and next steps", description: "Dashboard, learnings, and improvement roadmap." },
+          painTitle: "Pain points: What happens without a marketing strategy",
+          painIntro: "",
+          painPoints: [
+            "Publishing without a goal → no results",
+            "Poorly targeted ads → wasted money",
+            "Social without strategy → doesn’t attract real clients",
+            "Content without coherence → your brand weakens",
+            "Not measuring → you don’t know what works",
+            "Stalled growth → competition moves ahead",
           ],
+          painConclusion: "It’s not lack of talent. It’s lack of strategy.",
+          painCta: "I want to stop improvising",
+          includesTitle: "What Your Strategic Marketing Plan Includes",
           deliverables: [
-            "Digital marketing strategy and channel plan",
-            "Messaging guide and content pillars",
-            "Paid media setup and initial optimization",
-            "Tracking and basic dashboards",
-            "Optimization schedule and reports",
+            "Complete strategy: positioning, audience, message",
+            "Monthly content matrix",
+            "Script and professional copywriting",
+            "Ad creation + segmentation",
+            "Weekly optimization based on data",
+            "Simple, actionable reports",
+            "Continuous improvement recommendations",
+            "Integration with Branding / Web / Ecommerce",
           ],
+          processTitle: "Our Strategic Process",
+          steps: [
+            { title: "Diagnosis", description: "We understand your brand, context, and objectives." },
+            { title: "Strategy", description: "We define positioning, messages, and guidelines." },
+            { title: "Implementation", description: "Content, ads, landings, and creativity." },
+            { title: "Measurement", description: "Clear data, reports, and continuous optimization." },
+          ],
+          processCta: "See strategy examples",
           audience: [
-            "Entrepreneurs ready to scale with strategy and data",
-            "Personal brands and digital businesses investing in marketing",
-            "Projects with branding/web/ecommerce aiming for sustained growth",
-            "Teams needing clarity and measurement in their campaigns",
+            "Brands with Branding / Web / Ecommerce looking to scale",
+            "Ventures that want to grow with real strategy",
+            "Projects that need professional content and ads",
+            "Businesses that want to attract clients, not just followers",
+            "Companies that require decisions based on data",
           ],
-          examples: [],
-          instagramSlides: [],
-          pitch:
-            "We build serious, measurable, creative marketing strategies. Content, paid media, and ongoing optimization to grow with intention.",
+          internalLinks: [
+            { label: "See Web service", href: "/services/landing" },
+            { label: "See Branding service", href: "/services/branding-identidad-visual" },
+            { label: "See Ecommerce service", href: "/services/ecommerce-profesional" },
+          ],
+          differentiatorsTitle: "Differentiators",
+          differentiators: [
+            "Strategy + creativity + data (real balance)",
+            "Persuasive copy designed to convert",
+            "Segmented campaigns that attract real clients",
+            "Clear reports → smarter decisions",
+            "Personalized process (not generic, no templates)",
+          ],
+          planCta: "I want my marketing strategy",
+          finalCtaTitle: "Your brand needs more than presence: it needs direction.",
+          finalCtaSubtitle: "Clear strategy to grow with intention and results.",
+          finalCta: "I want my marketing strategy",
+          schema: {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: "Strategic Digital Marketing",
+            provider: {
+              "@type": "Organization",
+              name: "Cosmic Studio",
+              url: "https://cosmicst.dev",
+            },
+            description:
+              "Strategic digital marketing service with professional content, paid campaigns, segmentation, analytics, and continuous optimization for brands that want to grow with intention.",
+            areaServed: "Argentina, Latin America, United States",
+            serviceType: "Strategic Digital Marketing",
+          },
         },
       },
     },
@@ -1435,7 +1960,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       },
     },
     team: {
-      heading: "Cosmic Studio team",
+      heading: "Cosmic Studio Team",
       description: "Real people, creative minds, and live energy behind the system.",
       members: {
         jorge: {
@@ -1454,19 +1979,38 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     contact: {
       titleBeforeHighlight: "Ready to build your",
-      titleHighlight: "system?",
+      titleHighlight: "branding",
+      titleRotateOptions: ["branding?", "marketing?", "system?", "website?", "ecommerce?"],
       titleAfterHighlight: "",
       description: "Let's connect and design digital experiences that evolve.",
       nameLabel: "YOUR NAME / BUSINESS",
       namePlaceholder: "Name or company",
       messageLabel: "MESSAGE",
-      defaultMessage: "I'm interested in creating a system for my business",
+      messagePlaceholder: "Write your message...",
+      interestLabel: "I'm interested in",
+      interestHelper: "Choose one or several services",
+      interestPlaceholder: "Select services",
+      interestOptions: [
+        { id: "branding-identidad-visual", label: "Branding & visual identity" },
+        { id: "landing", label: "Web design & landing pages" },
+        { id: "ecommerce-profesional", label: "Premium online stores" },
+        { id: "strategy", label: "Custom software" },
+        { id: "marketing-digital", label: "Digital marketing" },
+      ],
+      interestIntro: "Hello. I want to know more about",
+      interestFallback: "your services at Cosmic Studio",
+      defaultMessage: "Hello. I want to know more about your services at Cosmic Studio.",
+      directMessageLabel: "Direct message",
+      sendEmailLabel: "Send by email",
+      sendWhatsappLabel: "Send via WhatsApp",
+      greetingPrefix: "Hi, I'm",
+      nameFallback: "a potential client",
+      emailSubject: "New message from Cosmic Studio",
       buttonLabel: "Contact the team",
       contactLine: "→ info.cosmicst@gmail.com",
       socials: [
         { label: "LinkedIn", href: "https://www.linkedin.com/company/cosmic-st/" },
-        { label: "Instagram", href: "#" },
-        { label: "Behance", href: "#" },
+        { label: "Instagram", href: "https://www.instagram.com/cosmicstudio.ig/" },
       ],
       footerNote: "© {year} Cosmic Studio. All rights reserved.",
       systemStatus: "System online",

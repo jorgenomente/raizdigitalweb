@@ -224,10 +224,10 @@ export function Manifesto() {
         </span>
       </motion.div>
 
-      <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center gap-16 text-center lg:flex-row lg:items-start lg:gap-20 lg:text-left">
-        <div className="flex flex-1 flex-col items-center text-center lg:items-start lg:text-left">
+      <div className="relative z-10 mx-auto max-w-5xl">
+        <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
           <motion.h2
-            className="font-space-grotesk mt-10 text-4xl text-white md:text-6xl"
+            className="font-space-grotesk mt-10 text-3xl text-white md:text-5xl"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -236,28 +236,44 @@ export function Manifesto() {
             {manifesto.headline}
           </motion.h2>
 
-          <motion.div
-            className="mt-8 w-full max-w-xl rounded-3xl border border-white/10 bg-white/5 p-8 text-left shadow-[0_25px_120px_rgba(7,12,18,0.65)]"
-            initial={{ opacity: 0, y: 24 }}
+          <motion.p
+            className="mt-5 max-w-xl text-lg text-[#E2E8F0]/80"
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.35 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
           >
-            <p className="text-sm uppercase tracking-[0.3em] text-[#AAB7C4]/80">
-              {manifesto.idealForHeading}
-            </p>
-            <ul className="mt-5 space-y-4 text-lg text-white/90">
-              {manifesto.idealForList.map((item) => (
-                <li key={item} className="flex items-start gap-3">
-                  <span className="mt-2 h-2 w-2 rounded-full bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3]" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
+            {manifesto.subheadline}
+          </motion.p>
         </div>
 
+        <motion.div
+          className="mt-10 grid gap-6 md:grid-cols-3"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          {manifesto.cards.map((card) => (
+            <div
+              key={card.title}
+              className="rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-[0_25px_120px_rgba(7,12,18,0.65)]"
+            >
+              <h3 className="text-sm uppercase tracking-[0.25em] text-[#AAB7C4]/80">
+                {card.title}
+              </h3>
+              <ul className="mt-4 space-y-3 text-sm text-white/90">
+                {card.items.map((item: string) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span className="mt-2 h-1.5 w-1.5 rounded-full bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3]" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </motion.div>
       </div>
-  </section>
-);
+    </section>
+  );
 }

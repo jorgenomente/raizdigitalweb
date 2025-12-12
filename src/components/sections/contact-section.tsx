@@ -1,7 +1,7 @@
 'use client';
 
-import { Fragment, useState } from "react";
-import { motion } from "framer-motion";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { ArrowRight, MessageSquare, User } from "lucide-react";
 import { useDictionary } from "@/components/providers/translation-provider";
 import { useMotionPreferences } from "@/lib/motion-preferences";
@@ -9,14 +9,48 @@ import { useMotionPreferences } from "@/lib/motion-preferences";
 export function ContactSection() {
   const { contact } = useDictionary();
   const { allowMotion, shouldReduceMotion } = useMotionPreferences();
+  const prefersReducedMotion = useReducedMotion();
   const [clientName, setClientName] = useState("");
   const [message, setMessage] = useState(() => contact.defaultMessage);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const isTitleInView = useInView(titleRef, { amount: 0.6, margin: "-20% 0px -20% 0px" });
+
+  const rotateOptions = useMemo(() => {
+    if (contact.titleRotateOptions && contact.titleRotateOptions.length > 0) {
+      return contact.titleRotateOptions;
+    }
+    return [contact.titleHighlight];
+  }, [contact]);
+
+  const [rotateIndex, setRotateIndex] = useState(0);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    if (!isTitleInView) return;
+    if (rotateOptions.length <= 1) return;
+
+    const id = window.setInterval(() => {
+      setRotateIndex((current) => (current + 1) % rotateOptions.length);
+    }, 2200);
+
+    return () => window.clearInterval(id);
+  }, [prefersReducedMotion, isTitleInView, rotateOptions.length]);
 
   const handleContact = () => {
-    const encodedMessage = encodeURIComponent(
-      `${message}${clientName ? `\nNombre o negocio: ${clientName}` : ""}`
-    );
-    const whatsappUrl = `https://wa.me/541171139469?text=${encodedMessage}`;
+    const lines: string[] = [];
+    const trimmedName = clientName.trim();
+    const trimmedMessage = message.trim();
+
+    if (trimmedName) {
+      lines.push(`${contact.nameLabel}: ${trimmedName}`);
+    }
+
+    if (trimmedMessage) {
+      lines.push(`${contact.messageLabel}: ${trimmedMessage}`);
+    }
+
+    const encodedMessage = encodeURIComponent(lines.join("\n"));
+    const whatsappUrl = `https://wa.me/5491171139469?text=${encodedMessage}`;
     window.open(whatsappUrl, "_blank");
   };
 
@@ -74,10 +108,25 @@ export function ContactSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="font-space-grotesk mb-6 text-4xl text-white md:text-6xl">
+          <h2 ref={titleRef} className="font-space-grotesk mb-6 text-4xl text-white md:text-6xl">
             {contact.titleBeforeHighlight}{" "}
             <span className="bg-gradient-to-r from-[#4FD4E4] to-[#D55FA3] bg-clip-text text-transparent">
-              {contact.titleHighlight}
+              {!prefersReducedMotion && rotateOptions.length > 1 ? (
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={rotateIndex}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className="inline-block"
+                  >
+                    {rotateOptions[rotateIndex]}
+                  </motion.span>
+                </AnimatePresence>
+              ) : (
+                rotateOptions[0]
+              )}
             </span>
             {contact.titleAfterHighlight ? ` ${contact.titleAfterHighlight}` : ""}
           </h2>

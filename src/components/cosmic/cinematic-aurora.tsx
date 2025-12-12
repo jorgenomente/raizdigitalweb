@@ -44,20 +44,22 @@ export function CinematicAurora({ variant = 'section', animated = false, classNa
       movement: 8,
     },
     contact: {
-      size: 'w-[210%] h-[920px]',
-      blur: 'blur-[82px]',
-      opacity: 'opacity-[0.09]',
+      size: 'w-[190%] h-[760px]',
+      blur: 'blur-[70px]',
+      staticBlur: 'blur-[0px]',
+      opacity: 'opacity-[0.08]',
       duration: 80,
       movement: 8,
     },
   } as const;
 
   const config = configs[variant];
+  const staticBlurClass = 'staticBlur' in config ? (config as any).staticBlur : config.blur;
 
   return (
     <div ref={containerRef} className={`absolute inset-0 -z-10 pointer-events-none overflow-hidden ${className}`}>
       <div
-        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${config.size} ${config.blur} opacity-[0.04]`}
+        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${config.size} ${staticBlurClass} opacity-[0.04]`}
         style={{
           background: auroraGradient,
           borderRadius: '50%',
@@ -84,7 +86,7 @@ export function CinematicAurora({ variant = 'section', animated = false, classNa
         />
       ) : (
         <div
-          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${config.size} ${config.blur} ${config.opacity}`}
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${config.size} ${staticBlurClass} ${config.opacity}`}
           style={{
             background: auroraGradient,
             borderRadius: '50%',

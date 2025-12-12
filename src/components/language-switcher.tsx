@@ -7,6 +7,11 @@ import { useDictionary } from "@/components/providers/translation-provider";
 import type { Locale } from "@/lib/i18n/dictionaries";
 import { locales } from "@/lib/i18n/dictionaries";
 
+const localeFlags: Record<Locale, string> = {
+  es: "🇦🇷",
+  en: "🇺🇸",
+};
+
 export function LanguageSwitcher({ locale }: { locale: Locale }) {
   const dictionary = useDictionary();
   const pathname = usePathname();
@@ -30,32 +35,29 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
   };
 
   return (
-    <div className="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-[#AAB7C4]">
-      <span className="text-[#AAB7C4]/80">
-        {dictionary.languageSwitcher.label}
-      </span>
-      <div className="flex items-center gap-2">
-        {locales.map((candidate) => {
-          const isActive = candidate === locale;
-          const languageCopy = dictionary.languageSwitcher.languages[candidate];
+    <div className="flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#AAB7C4]">
+      {locales.map((candidate) => {
+        const isActive = candidate === locale;
+        const languageCopy = dictionary.languageSwitcher.languages[candidate];
+        const flag = localeFlags[candidate] ?? "";
 
-          return (
-            <Link
-              key={candidate}
-              href={createHref(candidate)}
-              aria-label={languageCopy.label}
-              aria-pressed={isActive}
-              className={`rounded-full border px-3 py-1 transition-colors ${
-                isActive
-                  ? "border-white/70 bg-white/20 text-white"
-                  : "border-white/10 text-[#AAB7C4] hover:border-white/40 hover:text-white"
-              }`}
-            >
-              {languageCopy.short}
-            </Link>
-          );
-        })}
-      </div>
+        return (
+          <Link
+            key={candidate}
+            href={createHref(candidate)}
+            aria-label={languageCopy.label}
+            aria-pressed={isActive}
+            className={`flex items-center gap-2 rounded-full border px-3 py-1 transition-colors ${
+              isActive
+                ? "border-white/70 bg-white/20 text-white"
+                : "border-white/10 text-[#AAB7C4] hover:border-white/40 hover:text-white"
+            }`}
+          >
+            <span className="text-base leading-none">{flag}</span>
+            <span>{languageCopy.short}</span>
+          </Link>
+        );
+      })}
     </div>
   );
 }

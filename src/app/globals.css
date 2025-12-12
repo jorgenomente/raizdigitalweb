@@ -11,6 +11,16 @@ html, body {
   scroll-behavior: smooth;
 }
 
+@keyframes heroFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.1);
+  }
+  50% {
+    transform: translate3d(10px, -8px, 0) scale(1.1);
+  }
+}
+
 @theme {
   --radius: 0.75rem;
   --brand: #10b981; /* emerald-500 */
@@ -150,4 +160,70 @@ html, body {
   .font-geist-mono {
     font-family: var(--font-geist-mono, "Geist Mono"), monospace;
   }
+}
+
+/* Service pages: ensure light mode readability */
+:root:not(.dark) .service-page {
+  color: var(--foreground);
+  background: var(--background);
+}
+:root:not(.dark) .service-page .text-white {
+  color: #0f172a !important;
+}
+:root:not(.dark) .service-page .text-white\/65,
+:root:not(.dark) .service-page .text-white\/70,
+:root:not(.dark) .service-page .text-white\/80,
+:root:not(.dark) .service-page .text-white\/85,
+:root:not(.dark) .service-page .text-white\/90 {
+  color: #1f2937 !important;
+}
+:root:not(.dark) .service-page .bg-\[\#000000\],
+:root:not(.dark) .service-page .bg-black {
+  background-color: var(--background) !important;
+}
+:root:not(.dark) .service-page .bg-black\/30 { background-color: rgba(15,23,42,0.06) !important; }
+:root:not(.dark) .service-page .bg-black\/35 { background-color: rgba(15,23,42,0.08) !important; }
+:root:not(.dark) .service-page .bg-black\/40 { background-color: rgba(15,23,42,0.1) !important; }
+:root:not(.dark) .service-page .bg-black\/50 { background-color: rgba(15,23,42,0.14) !important; }
+:root:not(.dark) .service-page .border-white\/10,
+:root:not(.dark) .service-page .border-white\/12,
+:root:not(.dark) .service-page .border-white\/15,
+:root:not(.dark) .service-page .border-white\/20 {
+  border-color: rgba(15,23,42,0.14) !important;
+}
+:root:not(.dark) .service-page .bg-white\/10,
+:root:not(.dark) .service-page .bg-white\/5,
+:root:not(.dark) .service-page .bg-white\/8,
+:root:not(.dark) .service-page .bg-white\/6,
+:root:not(.dark) .service-page .bg-white\/3,
+:root:not(.dark) .service-page .bg-white\/4,
+:root:not(.dark) .service-page .bg-white\/02 {
+  background-color: rgba(255,255,255,0.9) !important;
+}
+:root:not(.dark) .service-page .text-\[\#B5C1CE\],
+:root:not(.dark) .service-page .text-\[\#8A99A8\],
+:root:not(.dark) .service-page .text-\[\#9BA8B5\],
+:root:not(.dark) .service-page .text-white\/40 {
+  color: #4b5563 !important;
+}
+
+:root {
+  --service-pain-bg: linear-gradient(120deg, rgba(14,165,233,0.12), rgba(124,58,237,0.08));
+  --service-pain-border: rgba(15,23,42,0.12);
+  --service-pain-shadow: 0 24px 60px rgba(15,23,42,0.12);
+  --service-final-bg: linear-gradient(120deg, rgba(14,165,233,0.12), rgba(168,85,247,0.12));
+  --service-final-border: rgba(15,23,42,0.12);
+  --service-final-shadow: 0 30px 60px rgba(15,23,42,0.12);
+}
+.dark {
+  --service-pain-bg: linear-gradient(to right, #1b0f1f, #0f1428, #0d0a1a);
+  --service-pain-border: rgba(255,255,255,0.1);
+  --service-pain-shadow: 0 24px 60px rgba(0,0,0,0.32);
+  --service-final-bg: linear-gradient(to right, #101828, #0c1224, #0a0f1e);
+  --service-final-border: rgba(255,255,255,0.1);
+  --service-final-shadow: 0 30px 60px rgba(0,0,0,0.32);
+}
+:root:not(.dark) .service-page .pain-section .text-white,
+:root:not(.dark) .service-page .final-cta .text-white {
+  color: #0f172a !important;
 }

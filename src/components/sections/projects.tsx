@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useDictionary } from "@/components/providers/translation-provider";
 import { ImageWithFallback } from "@/components/ui/image-with-fallback";
 import type { Dictionary, ProjectId } from "@/lib/i18n/dictionaries";
@@ -16,6 +16,10 @@ type ProjectCardConfig = {
 };
 
 type ProjectCopy = Dictionary["projects"]["items"][ProjectId];
+
+const PROJECT_CARD_WIDTH = "clamp(320px, 78vw, 420px)";
+const PROJECT_CARD_HEIGHT = "clamp(560px, 70vh, 640px)";
+const PROJECT_IMAGE_HEIGHT = "280px";
 
 const projectCards: ProjectCardConfig[] = [
   {
@@ -85,13 +89,17 @@ function ProjectCard({
 
   return (
     <div
-      className="w-[80vw] flex-shrink-0 snap-center sm:w-[350px] md:w-[380px] lg:w-[420px]"
+      className="project-card relative flex-shrink-0 snap-center md:snap-start"
+      style={{
+        width: "var(--project-card-width, clamp(320px, 78vw, 420px))",
+        height: "var(--project-card-height, clamp(560px, 70vh, 640px))",
+      }}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => !isScrolling && enableInteractiveHover && setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
     >
       <motion.div
-        className={`relative h-full overflow-hidden rounded-3xl bg-[#0E1C26]/60 ${shouldReduceMotion ? "" : "backdrop-blur-xl"}`}
+        className={`relative flex h-full flex-col overflow-hidden rounded-[28px] bg-transparent ${shouldReduceMotion ? "" : "backdrop-blur-xl"}`}
         style={{
           border: `1px solid ${project.color}20`,
           boxShadow: shouldReduceMotion
@@ -152,11 +160,15 @@ function ProjectCard({
           rel={linkRel}
           className="group/image block focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E1C26] focus-visible:ring-white/50"
         >
-          <div className="relative h-56 overflow-hidden md:h-64">
+          <div className="project-card-image relative overflow-hidden" style={{ height: "var(--project-image-height, 280px)" }}>
             <ImageWithFallback
               src={project.image}
               alt={copy.title}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover/image:scale-[1.03]"
+              className="block h-full w-full object-cover transition-transform duration-700 group-hover/image:scale-[1.04]"
+              style={{
+                borderBottomLeftRadius: "0",
+                borderBottomRightRadius: "0",
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0E1C26]/90" />
             <div
@@ -172,8 +184,8 @@ function ProjectCard({
           </div>
         </a>
 
-        <div className="relative px-6 pb-6 pt-6 md:px-8 md:pb-8">
-          <h3 className="font-space-grotesk mb-2 text-xl md:text-2xl">
+        <div className="relative flex flex-1 flex-col px-7 pb-8 pt-7 md:px-8 md:pb-9 md:pt-8">
+          <h3 className="font-space-grotesk mb-3 text-2xl font-semibold tracking-tight md:text-3xl">
             <a
               href={linkHref}
               target={linkTarget}
@@ -189,20 +201,20 @@ function ProjectCard({
             </a>
           </h3>
           <p
-            className="mb-4 text-sm text-[#AAB7C4] md:mb-6 md:text-base"
+            className="mb-6 text-base leading-relaxed text-[#B5C1CE] md:mb-7 md:text-lg"
             style={{ fontFamily: "Inter, sans-serif" }}
           >
             {copy.subtitle}
           </p>
 
-          <div className="mb-4 flex flex-wrap gap-2 md:mb-6">
+          <div className="mb-6 flex flex-wrap gap-3 md:mb-8">
             {copy.tags.map((tag) => (
               <span
                 key={tag}
-                className="font-geist-mono rounded-full border px-2.5 py-1 text-xs transition-all md:px-3 md:py-1.5"
+                className="font-geist-mono rounded-full border px-3 py-1.5 text-xs uppercase tracking-wide transition-all md:px-3.5 md:py-2"
                 style={{
                   borderColor: `${project.color}40`,
-                  background: `${project.color}10`,
+                  background: `${project.color}12`,
                   color: project.color,
                   transitionDuration: "0.4s",
                   transitionTimingFunction: "cubic-bezier(0.25, 0.1, 0.25, 1)",
@@ -215,9 +227,11 @@ function ProjectCard({
 
           <a
             href={linkHref}
-            className="group/link inline-flex items-center gap-2 text-sm transition-all"
+            className="group/link mt-auto inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold tracking-tight transition-all"
             style={{
+              background: `${project.color}15`,
               color: project.color,
+              border: `1.5px solid ${project.color}50`,
               fontFamily: "Inter, sans-serif",
               transitionDuration: "0.4s",
               transitionTimingFunction: "cubic-bezier(0.25, 0.1, 0.25, 1)",
@@ -270,6 +284,20 @@ export function Projects() {
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  const scrollByCard = (direction: "left" | "right") => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const firstCard = container.querySelector<HTMLElement>(".project-card");
+    const cardWidth = firstCard?.offsetWidth ?? 400;
+    const gap = 32;
+
+    container.scrollBy({
+      left: (cardWidth + gap) * (direction === "right" ? 1 : -1),
+      behavior: "smooth",
+    });
+  };
+
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -298,62 +326,8 @@ export function Projects() {
   return (
     <section
       id="projects"
-      className="relative py-24 scroll-mt-28 md:py-32"
+      className="projects-section relative py-24 scroll-mt-28 md:py-32"
     >
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0E1C26] via-[#111418] to-[#0E1C26]" />
-
-        {!shouldReduceMotion && (
-          <div className="absolute inset-0 opacity-[0.06]">
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundImage:
-                  "linear-gradient(#4FD4E4 1px, transparent 1px), linear-gradient(90deg, #D55FA3 1px, transparent 1px)",
-                backgroundSize: "80px 80px",
-              }}
-            />
-          </div>
-        )}
-
-        {!shouldReduceMotion && (
-          <>
-            <div
-              className="absolute left-1/4 top-1/4 h-96 w-96 rounded-full bg-[#4FD4E4] opacity-15"
-              style={{ filter: `blur(${allowMotion ? 140 : 90}px)` }}
-            />
-            <div
-              className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-[#D55FA3] opacity-15"
-              style={{ filter: `blur(${allowMotion ? 140 : 90}px)` }}
-            />
-          </>
-        )}
-
-        <svg className="absolute left-0 right-0 top-1/3 h-px overflow-visible opacity-10">
-          <motion.line
-            x1="15%"
-            y1="0"
-            x2="85%"
-            y2="0"
-            stroke="url(#projectsGradient)"
-            strokeWidth="2"
-            strokeDasharray="12,6"
-            initial={{ pathLength: 0, opacity: 0 }}
-            whileInView={{ pathLength: 1, opacity: 0.4 }}
-            viewport={{ once: true }}
-            transition={{ duration: 2.5, delay: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-          />
-          <defs>
-            <linearGradient id="projectsGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#4FD4E4" />
-              <stop offset="33%" stopColor="#D55FA3" />
-              <stop offset="66%" stopColor="#4FD4E4" />
-              <stop offset="100%" stopColor="#D55FA3" />
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
-
       <div className="relative">
         <motion.div
           className="mb-16 px-6 text-center md:mb-20"
@@ -372,38 +346,56 @@ export function Projects() {
 
         <div className="relative w-full">
           <div
-            className="pointer-events-none absolute left-0 top-0 bottom-0 z-10 w-16 md:w-24"
-            style={{
-              background:
-                "linear-gradient(to right, rgba(14, 28, 38, 1) 0%, rgba(14, 28, 38, 0.8) 30%, transparent 100%)",
-            }}
-          />
-          <div
-            className="pointer-events-none absolute right-0 top-0 bottom-0 z-10 w-16 md:w-24"
-            style={{
-              background:
-                "linear-gradient(to left, rgba(14, 28, 38, 1) 0%, rgba(14, 28, 38, 0.8) 30%, transparent 100%)",
-            }}
-          />
-
-          <div
             ref={scrollContainerRef}
-            className="overflow-x-auto px-6 py-8 md:py-12"
-            style={{
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-              WebkitOverflowScrolling: "touch",
-              scrollSnapType: "x proximity",
-              scrollPadding: "0 18vw",
-              overscrollBehaviorX: "contain",
-            }}
+            className="carousel-wrapper overflow-x-auto px-6 py-8 md:py-12"
           >
             <style>{`
-              .projects-track::-webkit-scrollbar {
+              .projects-section {
+                --project-card-width: ${PROJECT_CARD_WIDTH};
+                --project-card-height: ${PROJECT_CARD_HEIGHT};
+                --project-image-height: ${PROJECT_IMAGE_HEIGHT};
+              }
+              .carousel-wrapper {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x mandatory;
+                scroll-padding: 0 24px;
+                overscroll-behavior-x: contain;
+                scroll-behavior: smooth;
+              }
+              .carousel-wrapper::-webkit-scrollbar {
                 display: none;
               }
+              .carousel-track {
+                display: flex;
+                gap: 32px;
+              }
+              .project-card {
+                width: var(--project-card-width);
+                height: var(--project-card-height);
+              }
+              .project-card .project-card-image {
+                height: var(--project-image-height);
+              }
+              @media (max-width: 768px) {
+                .projects-section {
+                  --project-card-width: clamp(280px, 88vw, 360px);
+                  --project-card-height: clamp(520px, 72vh, 600px);
+                  --project-image-height: 240px;
+                }
+                .carousel-wrapper {
+                  scroll-snap-type: x proximity;
+                  padding-left: 1rem;
+                  padding-right: 1.25rem;
+                }
+                .carousel-track {
+                  gap: 20px;
+                  padding-right: 0.5rem;
+                }
+              }
             `}</style>
-            <div className="projects-track flex snap-x gap-6 justify-start pl-12 pr-[18vw] md:pl-0 md:pr-0 md:justify-center">
+            <div className="carousel-track snap-x pl-2 pr-8 md:pl-4 md:pr-8">
               {projectCards.map((project, index) => (
                 <ProjectCard
                   key={project.id}
@@ -419,6 +411,24 @@ export function Projects() {
             </div>
           </div>
 
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-4 md:px-8">
+            <button
+              type="button"
+              aria-label="Scroll left"
+              onClick={() => scrollByCard("left")}
+              className="pointer-events-auto hidden h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[#0E1C26]/70 text-white shadow-xl transition hover:scale-[1.03] hover:border-white/20 hover:bg-[#132534]/90 md:flex"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              aria-label="Scroll right"
+              onClick={() => scrollByCard("right")}
+              className="pointer-events-auto hidden h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[#0E1C26]/70 text-white shadow-xl transition hover:scale-[1.03] hover:border-white/20 hover:bg-[#132534]/90 md:flex"
+            >
+              <ArrowRight className="h-5 w-5" />
+            </button>
+          </div>
         </div>
       </div>
     </section>

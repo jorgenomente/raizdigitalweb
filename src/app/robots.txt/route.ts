@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thecosmicstudio.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://cosmicst.dev";
 
 export function GET() {
   const body = `User-agent: *
